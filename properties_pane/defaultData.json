@@ -68,8 +68,11 @@
 		"assignmentPolicy": "bucket"
 	},
 	"collection": {
-		"collectionName": "New collection",
+		"collectionName": "New directory",
 		"storeAsCollDir": "collection"
+	},
+	"nestedCollection": {
+		"collectionName": "New directory"
 	},
 	"field": {
 		"name": "New field"
