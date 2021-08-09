@@ -568,6 +568,13 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text"
 					},
 					{
+						"propertyName": "Activated",
+						"propertyKeyword": "isActivated",
+						"propertyTooltip": "Deactivated item will be not included in FE script",
+						"propertyType": "checkbox",
+						"defaultValue": true
+					},
+					{
 						"propertyName": "Index type",
 						"propertyKeyword": "idxType",
 						"propertyTooltip": "Select from list of options",
@@ -719,6 +726,13 @@ making sure that you maintain a proper JSON format.
 						"propertyKeyword": "idxName",
 						"propertyTooltip": "Friendly name for index",
 						"propertyType": "text"
+					},
+					{
+						"propertyName": "Activated",
+						"propertyKeyword": "isActivated",
+						"propertyTooltip": "Deactivated item will be not included in FE script",
+						"propertyType": "checkbox",
+						"defaultValue": true
 					},
 					{
 						"propertyName": "Index type",
@@ -948,6 +962,13 @@ making sure that you maintain a proper JSON format.
 						"propertyKeyword": "idxName",
 						"propertyTooltip": "Friendly name for index",
 						"propertyType": "text"
+					},
+					{
+						"propertyName": "Activated",
+						"propertyKeyword": "isActivated",
+						"propertyTooltip": "Deactivated item will be not included in FE script",
+						"propertyType": "checkbox",
+						"defaultValue": true
 					},
 					{
 						"propertyName": "Path expression",

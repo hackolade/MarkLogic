@@ -49,7 +49,7 @@ const getIndexesStatementsByType = (indexesData = [], handlersConfig, alreadyUse
 	let indexesVarNames = [];
 	const statements = handlersConfig.reduce((acc, indexHandler) => {
 		const indexTypeVarNames = [];
-		const indexesForType = indexesData.filter(({ idxType }) => idxType === indexHandler.type);
+		const indexesForType = indexesData.filter(({ idxType, isActivated }) => (idxType === indexHandler.type && isActivated !== false));
 
 		const indexStatements = indexesForType.map(indexData => {
 			const variableName = getCheckedVariableName(indexData.idxName, [...alreadyUsedVariableNames, ...indexesVarNames, ...indexTypeVarNames]);
