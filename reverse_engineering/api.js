@@ -54,7 +54,8 @@ module.exports = {
 		logInfo('Retrieving databases, collections/directories lists', connectionInfo, logger);
 		logger.log('info', '', 'Getting databases, collections/directories lists');
 		setDependencies(app);
-		let timeout;
+		const timeoutValue = connectionInfo.queryRequestTimeout || 1000 * 60 * 2;
+		let timeoutHandler;
 
 		try {
 			logger.progress({ message: 'Getting database list', containerName: '', entityName: '' });
@@ -71,9 +72,9 @@ module.exports = {
 				try {
 					const getTimeoutHandler = () => {
 						return new Promise((resolve, reject) => {
-							timeout = setTimeout(() => {
+							timeoutHandler = setTimeout(() => {
 								reject(new Error(timeoutMessage));
-							}, 1000 * 60 * 2);
+							}, timeoutValue);
 						});
 					}
 
@@ -98,7 +99,7 @@ module.exports = {
 					logger.log('error', err, `Retrieving collections/directories list for "${dbName}" DB`);
 					return null;
 				} finally {
-					clearTimeout(timeout);
+					clearTimeout(timeoutHandler);
 				}
 				
 				return {
@@ -112,7 +113,7 @@ module.exports = {
 			logger.log('error', err, 'Connecting to a DB for a retrieving collections/directories information');
 			cb(prepareError(err));
 		} finally {
-			clearTimeout(timeout);
+			clearTimeout(timeoutHandler);
 		}
 	},
 
