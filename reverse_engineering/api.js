@@ -88,7 +88,9 @@ module.exports = {
 								getDBCollections(dbClient, logger, connectionInfo.minDocuments, connectionInfo.collections),
 								getTimeoutHandler()
 							]);
-							dbCollections.push(UNDEFINED_COLLECTION_NAME);
+							if (!(connectionInfo.minDocuments || connectionInfo.collections)) {
+								dbCollections.push(UNDEFINED_COLLECTION_NAME);
+							}
 							setDocumentsOrganizationType(DOCUMENTS_ORGANIZING_COLLECTIONS);
 					}
 				} catch (err) {

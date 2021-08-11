@@ -61,17 +61,25 @@ const getDBCollections = async (dbClient, logger, minDocumentsPerCollection, col
 	logger.log('info', '', `Getting "${dbClient.connectionParams.database}" collections list started`);
 	const maxCollections = 1000;
 	const getAllCollectionsXQueryLexiconReady = `cts:collections("", "limit=${maxCollections}")`;
-	const getAllCollectionsMinDocumentsXQueryLexiconReady = `cts:collections()!text{.||";"||cts:count(.)}`;
 	const getAllCollectionsXQuery = 'fn:distinct-values(for $c in for $d in xdmp:directory("/", "infinity") return xdmp:document-get-collections(xdmp:node-uri($d)) return $c)';
 
 	let response;
+	let collectionsList;
 	const collectionsNames = collections && collections.split(',').map(item => item.trim());
-	const isCollectionsListSpecified = Array.isArray(collectionsNames) && collectionsNames.length > 0;
+	const isCollectionsListSpecified = Array.isArray(collectionsNames) && collectionsNames.length > 0;	
 
 	try {
-		const minDocuments = parseInt(minDocumentsPerCollection);
+		if (isCollectionsListSpecified) {
+			return await dependencies.async.filterSeries(collectionsNames, async collectionName => {
+				const isCollectionExistQuery = `xdmp:exists(collection("${collectionName}"))`;
+				const isCollectionExistResult = await dbClient.xqueryEval(isCollectionExistQuery).result();
+				return dependencies.lodash.get(isCollectionExistResult, ['0', 'value'], false);
+			});
+		}
 
+		const minDocuments = parseInt(minDocumentsPerCollection);
 		if (!isNaN(minDocuments)) {
+			const getAllCollectionsMinDocumentsXQueryLexiconReady = `cts:collections()!text{.||";"||cts:count(.,${minDocuments})}`;
 			const collectionsDocumentsCount = await dbClient.xqueryEval(getAllCollectionsMinDocumentsXQueryLexiconReady).result();
 			if (Array.isArray(collectionsDocumentsCount)) {
 				response = collectionsDocumentsCount.reduce((acc, { value }) => {
@@ -89,10 +97,10 @@ const getDBCollections = async (dbClient, logger, minDocumentsPerCollection, col
 		logger.log('error', err, 'Getting collections list using collection lexicon');
 		response = await dbClient.xqueryEval(getAllCollectionsXQuery).result();
 	}
-	let collectionsList = Array.isArray(response) ? response.map(({ value }) => value) : [];
-	if (isCollectionsListSpecified) {
-		collectionsList = collectionsList.filter(name => collectionsNames.includes(name));
-	}
+	collectionsList = Array.isArray(response) ? response.map(({ value }) => value) : [];
+	// if (isCollectionsListSpecified) {
+	// 	collectionsList = collectionsList.filter(name => collectionsNames.includes(name));
+	// }
 
 	logger.log(
 		'info',
