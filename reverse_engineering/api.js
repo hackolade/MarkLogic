@@ -85,8 +85,15 @@ module.exports = {
 							break;
 						default:
 							dbCollections = await Promise.race([
-								getDBCollections(dbClient, logger, connectionInfo.minDocuments, connectionInfo.collections),
-								getTimeoutHandler()
+								getDBCollections({
+									dbClient,
+									logger,
+									minDocumentsPerCollection:
+										connectionInfo.minDocuments,
+									collections: connectionInfo.collections,
+									collectionsMatcher: connectionInfo.collectionsMatcher
+								}),
+								getTimeoutHandler(),
 							]);
 							if (!(connectionInfo.minDocuments || connectionInfo.collections)) {
 								dbCollections.push(UNDEFINED_COLLECTION_NAME);
@@ -142,7 +149,7 @@ module.exports = {
 					let documents;
 					if (documentOrganizationType === DOCUMENTS_ORGANIZING_COLLECTIONS) {
 						if (entityName === UNDEFINED_COLLECTION_NAME) {
-							const collectionNames = await getDBCollections(dbClient, logger);
+							const collectionNames = await getDBCollections({ dbClient, logger });
 							if (collectionNames.length > 1000) {
 								documents = [];
 							} else {

@@ -51,6 +51,13 @@
 				"description": "Optionally specify comma separated collection names to limit scope of discovery"
 			},
 			{
+				"inputLabel": "Collection names matcher",
+				"inputKeyword": "collectionsMatcher",
+				"inputType": "text",
+				"inputPlaceholder": "not(matches(.,\".json$\"))",
+				"description": "Optionally specify collection names XPath matcher to limit scope of discovery"
+			},
+			{
 				"inputLabel": "Minimum documents per collection",
 				"inputKeyword": "minDocuments",
 				"inputType": "numeric",
