@@ -159,7 +159,7 @@ module.exports = {
 							documents = await getCollectionDocuments(entityName, dbClient, recordSamplingSettings);
 						}
 					} else {
-						documents = await getDirectoryDocuments(entityName, dbClient, recordSamplingSettings);
+						documents = await getDirectoryDocuments(entityName || '', dbClient, recordSamplingSettings);
 					}
 					logger.progress({ message: 'Sample documents loaded', containerName: dbName, entityName });					
 					logger.log('info', '', `Retrieving "${dbName}:${entityName}" documents finished`);
@@ -169,7 +169,7 @@ module.exports = {
 					}
 					return {
 						dbName,
-						collectionName: entityName  === UNDEFINED_COLLECTION_NAME ? 'Undefined collection' : entityName,
+						collectionName: entityName  === UNDEFINED_COLLECTION_NAME ? 'Undefined collection' : entityName || '',
 						documents,
 						entityLevel: {
 							storeAsCollDir: DOCUMENTS_ORGANIZING_COLLECTIONS ? 'collection' : 'directory'

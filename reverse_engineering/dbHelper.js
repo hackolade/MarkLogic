@@ -160,6 +160,7 @@ const getCollectionDocuments = async (collectionName, dbClient, recordSamplingSe
 		.query(
 			qb
 				.where(qb.collection(collectionName))
+				.withOptions({search: ['format-json']})
 				.slice(0, samplingCount)
 		)
 		.result();
@@ -173,6 +174,7 @@ const getUndefinedCollectionDocuments = async (collectionNames, dbClient, record
 			.query(
 				qb
 					.where(qb.not(qb.collection(...collectionNames)))
+					.withOptions({search: ['format-json']})
 					.slice(0, +recordSamplingSettings.absolute.value)
 			)
 			.result();
@@ -182,6 +184,7 @@ const getUndefinedCollectionDocuments = async (collectionNames, dbClient, record
 		.query(
 			qb
 				.where(qb.byExample({}))
+				.withOptions({search: ['format-json']})
 				.slice(0, samplingCount)
 		)
 		.result();
@@ -190,11 +193,16 @@ const getUndefinedCollectionDocuments = async (collectionNames, dbClient, record
 }
 
 const getDirectoryDocuments = async (directoryName, dbClient, recordSamplingSettings) => {
+	if (!directoryName) {
+		return [];
+	}
 	const samplingCount = await getDirectorySamplingCount(directoryName, recordSamplingSettings);
 	const documents = await dbClient.documents.query(
 		qb.where(
 			qb.directory(directoryName)
-		).slice(0, samplingCount)
+		)
+		.withOptions({search: ['format-json']})
+		.slice(0, samplingCount)
 	).result();
 
 	return documents.map(({ content }) => (content));
