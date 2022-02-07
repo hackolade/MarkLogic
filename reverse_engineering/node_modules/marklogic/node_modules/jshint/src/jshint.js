@@ -1,8 +1,9 @@
 /*!
  * JSHint, by JSHint Community.
  *
- * This file (and this file only) is licensed under the same slightly modified
- * MIT license that JSLint is. It stops evil-doers everywhere:
+ * Licensed under the MIT license.
+ *
+ * JSHint is a derivative work of JSLint:
  *
  *   Copyright (c) 2002 Douglas Crockford  (www.JSLint.com)
  *
@@ -15,8 +16,6 @@
  *
  *   The above copyright notice and this permission notice shall be included
  *   in all copies or substantial portions of the Software.
- *
- *   The Software shall be used for Good, not Evil.
  *
  *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -1028,7 +1027,6 @@ var JSHINT = (function() {
   }
 
   function nolinebreak(t) {
-    t = t;
     if (!sameLine(t, state.tokens.next)) {
       warning("E022", t, t.value);
     }
@@ -2427,14 +2425,21 @@ var JSHINT = (function() {
     return that;
   }, 30);
 
-  var orPrecendence = 40;
   infix("||", function(context, left, that) {
     increaseComplexityCount();
     that.left = left;
-    that.right = expression(context, orPrecendence);
+    that.right = expression(context, 40);
     return that;
-  }, orPrecendence);
-  infix("&&", "and", 50);
+  }, 40);
+
+  var andPrecedence = 50;
+  infix("&&", function(context, left, that) {
+    increaseComplexityCount();
+    that.left = left;
+    that.right = expression(context, andPrecedence);
+    return that;
+  }, andPrecedence);
+
   // The Exponentiation operator, introduced in ECMAScript 2016
   //
   // ExponentiationExpression[Yield] :
@@ -2744,8 +2749,7 @@ var JSHINT = (function() {
   state.syntax["new"].exps = true;
 
 
-  // Class statement
-  blockstmt("class", function(context) {
+  var classDeclaration = blockstmt("class", function(context) {
     var className, classNameToken;
     var inexport = context & prodParams.export;
 
@@ -2783,7 +2787,9 @@ var JSHINT = (function() {
     state.funct["(scope)"].stack();
     classBody(this, context);
     return this;
-  }).exps = true;
+  });
+  classDeclaration.exps = true;
+  classDeclaration.declaration = true;
 
   /*
     Class expression
@@ -3523,6 +3529,8 @@ var JSHINT = (function() {
       // are added to the param scope
       var currentParams = [];
 
+      pastRest = spreadrest("rest");
+
       if (_.includes(["{", "["], state.tokens.next.id)) {
         hasDestructuring = true;
         tokens = destructuringPattern(context);
@@ -3534,7 +3542,6 @@ var JSHINT = (function() {
           }
         }
       } else {
-        pastRest = spreadrest("rest");
         ident = identifier(context);
 
         if (ident) {
@@ -5217,9 +5224,9 @@ var JSHINT = (function() {
       if (foreachtok) {
         error("E045", foreachtok);
       }
-      nolinebreak(state.tokens.curr);
+
       advance(";");
-      if (decl) {
+      if (decl && decl.first && decl.first[0]) {
         if (decl.value === "const"  && !decl.hasInitializer) {
           warning("E012", decl, decl.first[0].value);
         }
@@ -5235,7 +5242,7 @@ var JSHINT = (function() {
       if (state.tokens.next.id !== ";") {
         checkCondAssignment(expression(context, 0));
       }
-      nolinebreak(state.tokens.curr);
+
       advance(";");
       if (state.tokens.next.id === ";") {
         error("E021", state.tokens.next, ")", ";");
@@ -5268,9 +5275,6 @@ var JSHINT = (function() {
   stmt("break", function() {
     var v = state.tokens.next.value;
 
-    if (!state.option.asi)
-      nolinebreak(this);
-
     if (state.tokens.next.identifier &&
         sameLine(state.tokens.curr, state.tokens.next)) {
       if (!state.funct["(scope)"].funct.hasLabel(v)) {
@@ -5295,9 +5299,6 @@ var JSHINT = (function() {
     if (state.funct["(breakage)"] === 0 || !state.funct["(loopage)"]) {
       warning("W052", state.tokens.next, this.value);
     }
-
-    if (!state.option.asi)
-      nolinebreak(this);
 
     if (state.tokens.next.identifier) {
       if (sameLine(state.tokens.curr, state.tokens.next)) {

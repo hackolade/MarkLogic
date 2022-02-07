@@ -752,6 +752,7 @@ Lexer.prototype = {
     var isAllowedDigit = isDecimalDigit;
     var base = 10;
     var isLegacy = false;
+    var isNonOctal = false;
 
     function isDecimalDigit(str) {
       return (/^[0-9]$/).test(str);
@@ -759,6 +760,10 @@ Lexer.prototype = {
 
     function isOctalDigit(str) {
       return (/^[0-7]$/).test(str);
+    }
+
+    function isNonOctalDigit(str) {
+      return str === "8" || str === "9";
     }
 
     function isBinaryDigit(str) {
@@ -843,25 +848,22 @@ Lexer.prototype = {
           base = 8;
           isLegacy = true;
 
-          index += 1;
-          value += char;
-        }
-
-        // Decimal numbers that start with '0' such as '09' are illegal
-        // but we still parse them and return as malformed.
-
-        if (!isOctalDigit(char) && isDecimalDigit(char)) {
-          index += 1;
-          value += char;
+        } else if (isDecimalDigit(char)) {
+          isNonOctal = true;
         }
       }
 
       while (index < length) {
         char = this.peek(index);
 
-        // Numbers like '019' (note the 9) are not valid octals
-        // but we still parse them and mark as malformed.
-        if (!(isLegacy && isDecimalDigit(char)) && !isAllowedDigit(char)) {
+        if (isLegacy && isNonOctalDigit(char)) {
+          base = 10;
+          isLegacy = false;
+          isNonOctal = true;
+          isAllowedDigit = isDecimalDigit;
+        }
+
+        if (!isAllowedDigit(char)) {
           break;
         }
         value += char;
@@ -880,6 +882,20 @@ Lexer.prototype = {
                 line: this.line,
                 character: this.char,
                 data: [ "BigInt", "bigint" ]
+              },
+              checks,
+              function() { return true; }
+            );
+          }
+
+          if (isLegacy || isNonOctal) {
+            this.triggerAsync(
+              "error",
+              {
+                code: "E067",
+                line: this.line,
+                character: this.char,
+                data: [value + char]
               },
               checks,
               function() { return true; }
@@ -966,11 +982,20 @@ Lexer.prototype = {
       }
     }
 
+    // TODO: Extend this check to other numeric literals
+    this.triggerAsync("warning", {
+      code: "W045",
+      line: this.line,
+      character: this.char + value.length,
+      data: [ value ]
+    }, checks, function() { return !isFinite(value); });
+
     return {
       type: Token.NumericLiteral,
       value: value,
       base: base,
-      isMalformed: !isFinite(value)
+      isNonOctal: isNonOctal,
+      isMalformed: false
     };
   },
 
@@ -1987,7 +2012,8 @@ Lexer.prototype = {
       if (type === "(identifier)") {
         if (value === "return" || value === "case" || value === "yield" ||
             value === "typeof" || value === "instanceof" || value === "void" ||
-            value === "await") {
+            value === "await" || value === "new" || value === "delete" ||
+            value === "default" || value === "extends") {
           this.prereg = true;
         }
 
@@ -2142,10 +2168,8 @@ Lexer.prototype = {
 
       case Token.NumericLiteral:
         if (token.isMalformed) {
-          // This condition unequivocally describes a syntax error.
-          // TODO: Re-factor as an "error" (not a "warning").
-          this.trigger("warning", {
-            code: "W045",
+          this.trigger("error", {
+            code: "E067",
             line: this.line,
             character: this.char,
             data: [ token.value ]
@@ -2165,6 +2189,14 @@ Lexer.prototype = {
           character: this.char
         }, checks, function() {
           return state.isStrict() && token.base === 8 && token.isLegacy;
+        });
+
+        this.triggerAsync("error", {
+          code: "E068",
+          line: this.line,
+          character: this.char
+        }, checks, function() {
+          return state.isStrict() && token.isNonOctal;
         });
 
         this.trigger("Number", {
