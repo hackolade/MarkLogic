@@ -290,23 +290,33 @@ const getDBProperties = async (dbClient, dbName, logger) => {
 	}, {});
 }
 
-const getDirectorySamplingCount = async (directoryName, samplingSettings, recursive) => {
-	if (samplingSettings.active === 'absolute') {
-		return +samplingSettings.absolute.value;
+const getDirectorySamplingCount = async (directoryName, recordSamplingSettings, recursive) => {
+	if (recordSamplingSettings.active === 'absolute') {
+		return Number(recordSamplingSettings.absolute.value);
 	} else {
 		const documentsCount = await getDirectoryDocumentsCount(directoryName, recursive);
-		return Math.round(documentsCount * samplingSettings.relative.value / 100);
+		return getSampleDocSize(documentsCount, recordSamplingSettings);
 	}
-}
+};
 
-const getCollectionSamplingCount = async (collectionName, samplingSettings) => {
-	if (samplingSettings.active === 'absolute') {
-		return +samplingSettings.absolute.value;
+const getCollectionSamplingCount = async (collectionName, recordSamplingSettings) => {
+	if (recordSamplingSettings.active === 'absolute') {
+		return Number(recordSamplingSettings.absolute.value);
 	} else {
 		const documentsCount = await getCollectionDocumentsCount(collectionName);
-		return Math.round(documentsCount * samplingSettings.relative.value / 100);
+		return getSampleDocSize(documentsCount, recordSamplingSettings);
 	}
-}
+};
+
+const getSampleDocSize = (count, recordSamplingSettings) => {
+	if (recordSamplingSettings.active === 'absolute') {
+		return Number(recordSamplingSettings.absolute.value);
+	}
+
+	const limit = Math.ceil((count * recordSamplingSettings.relative.value) / 100);
+
+	return Math.min(limit, recordSamplingSettings.maxValue);
+};
 
 const getCollectionDocumentsCount = async (collectionName) => {
 	const query = `xdmp:estimate(cts:search(doc(), cts:collection-query("${collectionName}")))`;
