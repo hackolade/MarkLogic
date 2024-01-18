@@ -116,7 +116,7 @@ making sure that you maintain a proper JSON format.
 				"sampleGen": "json"
 			},
 			{
-				"propertyName": "Schema URI",
+				"propertyName": "Document URI",
 				"propertyKeyword": "schemaUri",
 				"propertyType": "text",
 				"propertyTooltip": "Schema URI (/*.json)",

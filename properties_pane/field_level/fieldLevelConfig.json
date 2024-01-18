@@ -126,6 +126,7 @@ making sure that you maintain a proper JSON format.
 			"description",
 			"dependencies",
 			"required",
+			"primaryKey",
 			"foreignCollection",
 			"foreignField",
 			"relationshipType",

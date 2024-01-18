@@ -1,7 +1,7 @@
 {
 	"model": {
 		"modelName": "New model",
-		"dbVersion": "10.x",
+		"dbVersion": "12.x",
 		"dbVendor": "MarkLogic"
 	},
 	"container": {
