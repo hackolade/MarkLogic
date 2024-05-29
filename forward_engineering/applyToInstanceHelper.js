@@ -10,24 +10,24 @@ const getDBClient = (connectionInfo, database = null) => {
 		};
 	}
 	return marklogic.createDatabaseClient({
-			host: connectionInfo.host,
-			port: connectionInfo.port,
-			user: connectionInfo.username,
-			password: connectionInfo.password,
-			...(database && { database }),
-			...sslOptions,
-		});
-}
+		host: connectionInfo.host,
+		port: connectionInfo.port,
+		user: connectionInfo.username,
+		password: connectionInfo.password,
+		...(database && { database }),
+		...sslOptions,
+	});
+};
 
 const testConnection = dbClient => {
 	return dbClient.checkConnection().result();
-}
+};
 
 const applyScript = (dbClient, script) => {
 	return dbClient.eval(script).result();
-}
+};
 
-const readCertificateFiles = (connectionInfo) => {
+const readCertificateFiles = connectionInfo => {
 	const certificates = {};
 	if (connectionInfo.ca) {
 		certificates.ca = fs.readFileSync(connectionInfo.ca);
@@ -39,7 +39,7 @@ const readCertificateFiles = (connectionInfo) => {
 		certificates.key = fs.readFileSync(connectionInfo.sslKey);
 	}
 	return certificates;
-}
+};
 
 module.exports = {
 	getDBClient,

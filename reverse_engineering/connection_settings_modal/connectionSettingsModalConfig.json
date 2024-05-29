@@ -10,7 +10,6 @@
 				"validation": {
 					"regex": "([^\\s])"
 				}
-				
 			},
 			{
 				"inputLabel": "Host",
@@ -29,14 +28,17 @@
 				"inputKeyword": "documentsOrganizing",
 				"inputType": "select",
 				"description": "",
-				"options": [{
-					"value": "collections",
-					"label": "Collections"
-				}, {
-					"value": "directories",
-					"label": "Directories"
-				}],
-				"defaultValue": "collections" 
+				"options": [
+					{
+						"value": "collections",
+						"label": "Collections"
+					},
+					{
+						"value": "directories",
+						"label": "Directories"
+					}
+				],
+				"defaultValue": "collections"
 			},
 			{
 				"inputLabel": "Database",
@@ -77,18 +79,19 @@
 				"inputKeyword": "connectionType",
 				"inputType": "select",
 				"description": "",
-				"options": [{
-					"value": "digest",
-					"label": "digest"
-				}],
-				"defaultValue": "digest" 
+				"options": [
+					{
+						"value": "digest",
+						"label": "digest"
+					}
+				],
+				"defaultValue": "digest"
 			},
 			{
 				"inputLabel": "User Name",
 				"inputKeyword": "username",
 				"inputType": "text",
 				"inputPlaceholder": "User Name"
-				
 			},
 			{
 				"inputLabel": "Password",
@@ -107,7 +110,6 @@
 				"inputLabel": "Enable SSL",
 				"inputKeyword": "is_ssl",
 				"inputType": "checkbox"
-				
 			},
 			{
 				"inputLabel": "Authority Certificate",

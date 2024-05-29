@@ -109,10 +109,12 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "text",
 				"arrayItemDisabled": true,
 				"enableForReference": true,
-				"disabledOnCondition": [{
+				"disabledOnCondition": [
+					{
 						"key": "key",
 						"value": true
-					}, {
+					},
+					{
 						"key": "documentKind",
 						"value": true
 					}
@@ -151,14 +153,6 @@ making sure that you maintain a proper JSON format.
 		"triple": "document",
 		"quad": "document",
 		"___2": [],
-		"geoSpatial": [
-			"name",
-			"schemaId",
-			"type",
-			"description",
-			"required",
-			"comments",
-			"subtype"
-		]
+		"geoSpatial": ["name", "schemaId", "type", "description", "required", "comments", "subtype"]
 	}
 }
