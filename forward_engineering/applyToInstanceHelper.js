@@ -1,5 +1,5 @@
 const fs = require('fs');
-const marklogic = require('../reverse_engineering/node_modules/marklogic');
+const marklogic = require('marklogic');
 
 const getDBClient = (connectionInfo, database = null) => {
 	let sslOptions = {};
