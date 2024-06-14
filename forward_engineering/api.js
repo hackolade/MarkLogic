@@ -2,7 +2,7 @@ const { setDependencies, dependencies } = require('./appDependencies');
 const { getDBClient, testConnection, applyScript } = require('./applyToInstanceHelper');
 const { getIndexes } = require('./helpers/indexesHelper');
 
-const setLocalDependencies = ({ lodash }) => _ = lodash;
+const setLocalDependencies = ({ lodash }) => (_ = lodash);
 let _;
 
 module.exports = {
@@ -14,18 +14,18 @@ module.exports = {
 			const { collections, containerData } = data;
 			const dbName = _.get(containerData, '[0].name', '');
 			logger.clear();
-			
-			let script = collections.map(
-				collectionSchema => getValidationSchemaData(JSON.parse(collectionSchema))
-			).reduce((script, schemaData) => {
-				return script + '\n\n' + getSchemaInsertStatement(schemaData);
-			}, getStartStatements());
+
+			let script = collections
+				.map(collectionSchema => getValidationSchemaData(JSON.parse(collectionSchema)))
+				.reduce((script, schemaData) => {
+					return script + '\n\n' + getSchemaInsertStatement(schemaData);
+				}, getStartStatements());
 
 			const indexes = getIndexes(containerData[2], dbName);
 			script = script + (indexes && '\n\n' + indexes);
 
 			cb(null, script);
-		} catch(e) {
+		} catch (e) {
 			logger.log('error', { message: e.message, stack: e.stack }, 'Forward-Engineering Error');
 			setTimeout(() => {
 				cb({ message: e.message, stack: e.stack });
@@ -41,15 +41,15 @@ module.exports = {
 		let { jsonSchema, containerData } = data;
 		logger.clear();
 		try {
-			const schemasDatabase = _.get(containerData,'schemaDB');
-			let schemasDatabaseStatement = ''
-			if(schemasDatabase){
- 				schemasDatabaseStatement = '\n\n' + getSchemasDatabaseAdditionalStatement(schemasDatabase);
+			const schemasDatabase = _.get(containerData, 'schemaDB');
+			let schemasDatabaseStatement = '';
+			if (schemasDatabase) {
+				schemasDatabaseStatement = '\n\n' + getSchemasDatabaseAdditionalStatement(schemasDatabase);
 			}
 			const schemaStatement = getSchemaInsertStatement(getValidationSchemaData(JSON.parse(jsonSchema)));
-			const script = getStartStatements() +  schemasDatabaseStatement + '\n\n' + schemaStatement;
+			const script = getStartStatements() + schemasDatabaseStatement + '\n\n' + schemaStatement;
 			cb(null, script);
-		} catch(e) {
+		} catch (e) {
 			logger.log('error', { message: e.message, stack: e.stack }, 'Forward-Engineering Error');
 			setTimeout(() => {
 				cb({ message: e.message, stack: e.stack });
@@ -72,13 +72,13 @@ module.exports = {
 			const containerProps = _.get(data.containerData, '[0]', {});
 			let schemaDB = containerProps.schemaDB || getParsedSchemasDatabase(data.script);
 			if (!schemaDB) {
-				return cb({ message: 'Schema database wasn\'t specified' });
+				return cb({ message: "Schema database wasn't specified" });
 			}
 
 			const client = getDBClient(data, schemaDB);
 			await applyScript(client, data.script);
 			cb();
-		} catch(err) {
+		} catch (err) {
 			logger.log('error', mapError(err), 'Apply to instance Error');
 			console.log(err);
 			cb(mapError(err));
@@ -92,34 +92,52 @@ module.exports = {
 			const client = getDBClient(connectionInfo);
 			await testConnection(client);
 			return cb();
-		} catch(err) {
+		} catch (err) {
 			logger.log('error', mapError(err), 'Connection failed');
 			return cb(mapError(err));
 		}
-	}
+	},
 };
 
 const getValidationSchemaData = jsonSchema => {
 	return {
 		schema: {
-			...(_.pick(jsonSchema, ['$schema', 'id', 'type', 'title', 'description', 'additionalProperties'])),
+			..._.pick(jsonSchema, ['$schema', 'id', 'type', 'title', 'description', 'additionalProperties']),
 			...getAdoptedSchema(jsonSchema),
 		},
 		uri: getSchemaURI(jsonSchema),
 	};
-}
+};
 
 const getAdoptedSchema = schema => {
-	const availableKeys = ['enum', 'additionalItems', 'maxItems', 'minItems', 'uniqueItems',
-		'multipleOf', 'maximum', 'exclusiveMaximum', 'minimum',
-		'exclusiveMinimum', 'maxProperties', 'minProperties', 'required',
-		'additionalProperties', 'properties', 'patternProperties',
-		'dependencies', 'maxLength', 'minLength', 'pattern', 'format', 'description'
-	]; 
+	const availableKeys = [
+		'enum',
+		'additionalItems',
+		'maxItems',
+		'minItems',
+		'uniqueItems',
+		'multipleOf',
+		'maximum',
+		'exclusiveMaximum',
+		'minimum',
+		'exclusiveMinimum',
+		'maxProperties',
+		'minProperties',
+		'required',
+		'additionalProperties',
+		'properties',
+		'patternProperties',
+		'dependencies',
+		'maxLength',
+		'minLength',
+		'pattern',
+		'format',
+		'description',
+	];
 	const adoptedSchema = {
 		type: getType(schema.type),
-		...(_.pick(schema, availableKeys)),
-		...(getChoices(schema)),
+		..._.pick(schema, availableKeys),
+		...getChoices(schema),
 	};
 
 	if (schema.properties) {
@@ -135,7 +153,7 @@ const getAdoptedSchema = schema => {
 	}
 
 	return adoptedSchema;
-}
+};
 
 const getType = type => {
 	switch (type) {
@@ -146,7 +164,7 @@ const getType = type => {
 		default:
 			return type;
 	}
-}
+};
 
 const getProperties = properties => {
 	const adoptedProperties = {};
@@ -154,7 +172,7 @@ const getProperties = properties => {
 		adoptedProperties[key] = getAdoptedSchema(properties[key]);
 	}
 	return adoptedProperties;
-}
+};
 
 const getArrayItems = arrayItems => {
 	if (Array.isArray(arrayItems)) {
@@ -162,7 +180,7 @@ const getArrayItems = arrayItems => {
 	} else {
 		return getAdoptedSchema(arrayItems);
 	}
-}
+};
 
 const getSchemaURI = schema => {
 	if (schema.schemaURI) {
@@ -178,15 +196,15 @@ const getSchemaURI = schema => {
 		const collectionName = schema.code || schema.collectionName || schema.title;
 		return `/${collectionName}.json`;
 	}
-}
+};
 
 const getStartStatements = () => {
 	return `'use strict';\n\ndeclareUpdate();`;
-}
+};
 
 const getSchemaInsertStatement = ({ uri, schema }) => {
 	return `xdmp.documentInsert("${uri}", ${JSON.stringify(schema, null, 2)});`;
-}
+};
 
 const getChoices = schema => {
 	const choices = {};
@@ -202,25 +220,25 @@ const getChoices = schema => {
 	if (schema.not) {
 		choices.not = getAdoptedSchema(schema.not);
 	}
-	
-	return choices;
-}
 
-const getSchemasDatabaseAdditionalStatement = (databaseName) => {
+	return choices;
+};
+
+const getSchemasDatabaseAdditionalStatement = databaseName => {
 	return `// schemasDatabase=${databaseName}`;
-}
+};
 
 const getParsedSchemasDatabase = script => {
 	return (script.match(/\/\/ schemasDatabase=(\w+)/) || [])[1];
-}
+};
 
-const mapError = (error) => {
+const mapError = error => {
 	if (!(error instanceof Error)) {
 		return error;
 	}
 
 	return {
 		message: error.message + '\n' + _.get(error, 'body.errorResponse.message', ''),
-		stack: error.stack
+		stack: error.stack,
 	};
 };

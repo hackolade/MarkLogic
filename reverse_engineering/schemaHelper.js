@@ -1,26 +1,26 @@
 let _;
 const { dependencies } = require('./appDependencies');
 
-const setDependencies = ({ lodash }) => _ = lodash;
+const setDependencies = ({ lodash }) => (_ = lodash);
 
-const snippetsPath = "../snippets/";
+const snippetsPath = '../snippets/';
 
 const snippets = {
-	"box": require(snippetsPath + "geoSpatial-box.json"),
-	"circle": require(snippetsPath + "geoSpatial-circle.json"),
-	"linestring": require(snippetsPath + "geoSpatial-linestring.json"),
-	"multilinestring": require(snippetsPath + "geoSpatial-multilinestring.json"),
-	"multipoint": require(snippetsPath + "geoSpatial-multipoint.json"),
-	"multipolygon": require(snippetsPath + "geoSpatial-multipolygon.json"),
-	"point": require(snippetsPath + "geoSpatial-point.json"),
-	"polygon": require(snippetsPath + "geoSpatial-polygon.json"),
+	'box': require(snippetsPath + 'geoSpatial-box.json'),
+	'circle': require(snippetsPath + 'geoSpatial-circle.json'),
+	'linestring': require(snippetsPath + 'geoSpatial-linestring.json'),
+	'multilinestring': require(snippetsPath + 'geoSpatial-multilinestring.json'),
+	'multipoint': require(snippetsPath + 'geoSpatial-multipoint.json'),
+	'multipolygon': require(snippetsPath + 'geoSpatial-multipolygon.json'),
+	'point': require(snippetsPath + 'geoSpatial-point.json'),
+	'polygon': require(snippetsPath + 'geoSpatial-polygon.json'),
 };
 
 module.exports = {
 	getSchemaTemplate(parentDirectory) {
 		return {
-			$schema: "http://json-schema.org/draft-04/schema#",
-			type: "object",
+			$schema: 'http://json-schema.org/draft-04/schema#',
+			type: 'object',
 			additionalProperties: false,
 			properties: {},
 		};
@@ -42,7 +42,7 @@ module.exports = {
 	getObjectSchema(objectData) {
 		const properties = Object.entries(objectData).reduce((properties, [key, value]) => {
 			properties[key] = this.getType(value);
-			return properties
+			return properties;
 		}, {});
 
 		const snippetType = this.getSnippetType(objectData);
@@ -55,15 +55,15 @@ module.exports = {
 					subType: snippetType.subType,
 					properties: {
 						...properties,
-						...snippetSchema
-					}
+						...snippetSchema,
+					},
 				};
 			}
 		}
 
 		return {
 			type: 'object',
-			properties
+			properties,
 		};
 	},
 
@@ -79,13 +79,13 @@ module.exports = {
 		if (uniqItems.length === 1) {
 			return {
 				type: 'array',
-				items: uniqItems[0]
+				items: uniqItems[0],
 			};
 		}
 
 		return {
 			type: 'array',
-			items
+			items,
 		};
 	},
 
@@ -115,7 +115,7 @@ module.exports = {
 
 	getType(value) {
 		const valueType = this.getValueType(value);
-		switch(valueType) {
+		switch (valueType) {
 			case 'scalar':
 				return {};
 			case 'array':
@@ -144,12 +144,12 @@ module.exports = {
 		for (let i in snippet.properties) {
 			const field = snippet.properties[i];
 			let currentSchema = {
-				type: field.type
+				type: field.type,
 			};
 
 			if (field.properties) {
 				const properties = this.getSchemaFromSnippet(field);
-				
+
 				if (currentSchema.type === 'array') {
 					currentSchema.items = properties;
 				} else {
@@ -170,4 +170,4 @@ module.exports = {
 
 		return schema;
 	},
-}; 
+};

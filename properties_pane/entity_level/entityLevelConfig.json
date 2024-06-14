@@ -96,10 +96,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"collection",
-					"directory"
-				]
+				"options": ["collection", "directory"]
 			},
 			{
 				"propertyName": "Content type",
@@ -123,7 +120,7 @@ making sure that you maintain a proper JSON format.
 				"fallbackValueKeyword": ["code", "collectionName"],
 				"fallbackValueTemplate": "/${fallbackValue}.json",
 				"shouldValidate": true,
-				"regex": "^\/[\\w]+[\\w .!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]*\\.json$"
+				"regex": "^/[\\w]+[\\w .!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]*\\.json$"
 			},
 			{
 				"propertyName": "Permissions",
@@ -152,13 +149,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "multipleCheckboxSelect",
-				"options": [
-					"read",
-					"insert",
-					"update",
-					"node-update",
-					"execute"
-				]
+				"options": ["read", "insert", "update", "node-update", "execute"]
 			},
 			{
 				"propertyName": "Comments",

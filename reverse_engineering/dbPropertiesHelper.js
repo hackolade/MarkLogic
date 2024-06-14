@@ -1,5 +1,6 @@
-const getDBPropertiesConfig = (dbName) => {
-	const xqueryAdminNamespace = 'import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";';
+const getDBPropertiesConfig = dbName => {
+	const xqueryAdminNamespace =
+		'import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";';
 	const xqueryAdminConfig = 'let $config := admin:get-configuration()';
 	const propHandlers = [
 		{
@@ -246,12 +247,11 @@ const getDBPropertiesConfig = (dbName) => {
 			keyword: 'assignmentPolicy',
 			query: `${xqueryAdminNamespace} ${xqueryAdminConfig} return admin:database-get-assignment-policy($config, xdmp:database("${dbName}"))`,
 		},
-
 	];
 
 	return propHandlers;
-}
+};
 
 module.exports = {
-	getDBPropertiesConfig
+	getDBPropertiesConfig,
 };

@@ -1,12 +1,19 @@
 const getIndexes = (indexData, dbName) => {
-	if(!indexData) {
+	if (!indexData) {
 		return '';
 	}
 
 	const alreadyUsedVariableNames = ['admin', 'config', 'dbId'];
 	const rangeIndexes = getRangeIndexes(indexData.rangeIndexes, alreadyUsedVariableNames);
-	const geoPointIndexes = getGeoPointIndexes(indexData.geoPointIndexes, [...alreadyUsedVariableNames, ...rangeIndexes.indexesVarNames]);
-	const geoRegionIndexes = getGeoRegionIndexes(indexData.geoRegionIndexes, [...alreadyUsedVariableNames, ...rangeIndexes.indexesVarNames, geoPointIndexes.indexesVarNames]);
+	const geoPointIndexes = getGeoPointIndexes(indexData.geoPointIndexes, [
+		...alreadyUsedVariableNames,
+		...rangeIndexes.indexesVarNames,
+	]);
+	const geoRegionIndexes = getGeoRegionIndexes(indexData.geoRegionIndexes, [
+		...alreadyUsedVariableNames,
+		...rangeIndexes.indexesVarNames,
+		geoPointIndexes.indexesVarNames,
+	]);
 
 	const statements = [...rangeIndexes.statements, ...geoPointIndexes.statements, ...geoRegionIndexes.statements];
 	if (statements.length === 0) {
@@ -20,7 +27,11 @@ const getIndexes = (indexData, dbName) => {
 const getRangeIndexes = (rangeIndexesData, alreadyUsedVariableNames) => {
 	const rangeIndexHandlers = [
 		{ type: 'Element', mapper: elementRangeIndexesMapper, addIndexesFuncName: 'databaseAddRangeElementIndex' },
-		{ type: 'Attribute', mapper: elementAttributesRangeIndexesMapper, addIndexesFuncName: 'databaseAddRangeElementAttributeIndex' },
+		{
+			type: 'Attribute',
+			mapper: elementAttributesRangeIndexesMapper,
+			addIndexesFuncName: 'databaseAddRangeElementAttributeIndex',
+		},
 		{ type: 'Path', mapper: rangePathIndexesMapper, addIndexesFuncName: 'databaseAddRangePathIndex' },
 		{ type: 'Field', mapper: rangeFieldIndexesMapper, addIndexesFuncName: 'databaseAddRangeFieldIndex' },
 	];
@@ -30,17 +41,29 @@ const getRangeIndexes = (rangeIndexesData, alreadyUsedVariableNames) => {
 const getGeoPointIndexes = (geoPointIndexesData, alreadyUsedVariableNames) => {
 	const geoPointIndexHandlers = [
 		{ type: 'Element', mapper: geoElementIndexesMapper, addIndexesFuncName: 'databaseAddGeospatialElementIndex' },
-		{ type: "Element child", mapper: geoElementChildIndexesMapper, addIndexesFuncName: 'databaseAddGeospatialElementChildIndex' },
-		{ type: "Element pair", mapper: geoElementPairIndexesMapper, addIndexesFuncName: 'databaseAddGeospatialElementPairIndex' },
-		{ type: "Attribute pair", mapper: geoAttributePairIndexesMapper, addIndexesFuncName: 'databaseAddGeospatialElementAttributePairIndex' },
-		{ type: "Path", mapper: geoPathIndexesMapper, addIndexesFuncName: 'databaseAddGeospatialPathIndex' },
+		{
+			type: 'Element child',
+			mapper: geoElementChildIndexesMapper,
+			addIndexesFuncName: 'databaseAddGeospatialElementChildIndex',
+		},
+		{
+			type: 'Element pair',
+			mapper: geoElementPairIndexesMapper,
+			addIndexesFuncName: 'databaseAddGeospatialElementPairIndex',
+		},
+		{
+			type: 'Attribute pair',
+			mapper: geoAttributePairIndexesMapper,
+			addIndexesFuncName: 'databaseAddGeospatialElementAttributePairIndex',
+		},
+		{ type: 'Path', mapper: geoPathIndexesMapper, addIndexesFuncName: 'databaseAddGeospatialPathIndex' },
 	];
 	return getIndexesStatementsByType(geoPointIndexesData, geoPointIndexHandlers, alreadyUsedVariableNames);
 };
 
 const getGeoRegionIndexes = (geoRegionIndexesData, alreadyUsedVariableNames) => {
 	const geoRegionIndexHandlers = [
-		{ mapper: geoRegionIndexesMapper, addIndexesFuncName: 'databaseAddGeospatialRegionPathIndex' }
+		{ mapper: geoRegionIndexesMapper, addIndexesFuncName: 'databaseAddGeospatialRegionPathIndex' },
 	];
 	return getIndexesStatementsByType(geoRegionIndexesData, geoRegionIndexHandlers, alreadyUsedVariableNames);
 };
@@ -49,14 +72,20 @@ const getIndexesStatementsByType = (indexesData = [], handlersConfig, alreadyUse
 	let indexesVarNames = [];
 	const statements = handlersConfig.reduce((acc, indexHandler) => {
 		const indexTypeVarNames = [];
-		const indexesForType = indexesData.filter(({ idxType, isActivated }) => (idxType === indexHandler.type && isActivated !== false));
+		const indexesForType = indexesData.filter(
+			({ idxType, isActivated }) => idxType === indexHandler.type && isActivated !== false,
+		);
 
 		const indexStatements = indexesForType.map(indexData => {
-			const variableName = getCheckedVariableName(indexData.idxName, [...alreadyUsedVariableNames, ...indexesVarNames, ...indexTypeVarNames]);
+			const variableName = getCheckedVariableName(indexData.idxName, [
+				...alreadyUsedVariableNames,
+				...indexesVarNames,
+				...indexTypeVarNames,
+			]);
 			indexTypeVarNames.push(variableName);
 			return indexHandler.mapper(indexData, variableName);
 		});
-		
+
 		if (indexStatements.length === 0) {
 			return acc;
 		}
@@ -64,7 +93,7 @@ const getIndexesStatementsByType = (indexesData = [], handlersConfig, alreadyUse
 		const indexesAddStatement = getIndexesAddStatement(indexHandler.addIndexesFuncName, indexTypeVarNames) + '\n';
 		indexStatements.push(indexesAddStatement);
 
-		return [...acc, ...indexStatements]
+		return [...acc, ...indexStatements];
 	}, []);
 
 	return { statements, indexesVarNames };
@@ -80,7 +109,7 @@ const elementRangeIndexesMapper = (data, varName) => {
 		mapBoolean(data.rangeValuePositions),
 		mapString(data.invalidValues),
 	];
-	
+
 	return getIndexFuncStatement(varName, funcName, funcArguments);
 };
 
@@ -96,7 +125,7 @@ const elementAttributesRangeIndexesMapper = (data, varName) => {
 		mapBoolean(data.rangeValuePositions),
 		mapString(data.invalidValues),
 	];
-	
+
 	return getIndexFuncStatement(varName, funcName, funcArguments);
 };
 
@@ -110,7 +139,7 @@ const rangePathIndexesMapper = (data, varName) => {
 		mapBoolean(data.rangeValuePositions),
 		mapString(data.invalidValues),
 	];
-	
+
 	return getIndexFuncStatement(varName, funcName, funcArguments);
 };
 
@@ -123,7 +152,7 @@ const rangeFieldIndexesMapper = (data, varName) => {
 		mapBoolean(data.rangeValuePositions),
 		mapString(data.invalidValues),
 	];
-	
+
 	return getIndexFuncStatement(varName, funcName, funcArguments);
 };
 
@@ -137,7 +166,7 @@ const geoElementIndexesMapper = (data, varName) => {
 		mapString(data.pointFormat),
 		mapString(data.invalidValues),
 	];
-	
+
 	return getIndexFuncStatement(varName, funcName, funcArguments);
 };
 
@@ -153,7 +182,7 @@ const geoElementChildIndexesMapper = (data, varName) => {
 		mapString(data.pointFormat),
 		mapString(data.invalidValues),
 	];
-	
+
 	return getIndexFuncStatement(varName, funcName, funcArguments);
 };
 
@@ -170,7 +199,7 @@ const geoElementPairIndexesMapper = (data, varName) => {
 		mapBoolean(data.rangeValuePositions),
 		mapString(data.invalidValues),
 	];
-	
+
 	return getIndexFuncStatement(varName, funcName, funcArguments);
 };
 
@@ -187,7 +216,7 @@ const geoAttributePairIndexesMapper = (data, varName) => {
 		mapBoolean(data.rangeValuePositions),
 		mapString(data.invalidValues),
 	];
-	
+
 	return getIndexFuncStatement(varName, funcName, funcArguments);
 };
 
@@ -200,7 +229,7 @@ const geoPathIndexesMapper = (data, varName) => {
 		mapString(data.pointFormat),
 		mapString(data.invalidValues),
 	];
-	
+
 	return getIndexFuncStatement(varName, funcName, funcArguments);
 };
 
@@ -213,7 +242,7 @@ const geoRegionIndexesMapper = (data, varName) => {
 		mapString(data.invalidValues),
 		mapString(data.units),
 	];
-	
+
 	return getIndexFuncStatement(varName, funcName, funcArguments);
 };
 
@@ -223,40 +252,42 @@ const getIndexFuncStatement = (varName, funcName, funcArguments) => {
 
 const mapString = (value = '') => {
 	return `"${value}"`;
-}
+};
 
 const mapInteger = (value = 0) => {
 	return parseInt(value);
-}
+};
 
-const mapBoolean = (value) => {
+const mapBoolean = value => {
 	return value === true ? 'fn.true()' : 'fn.false()';
-}
+};
 
 const getCheckedVariableName = (name = '', alreadyUsedVariableNames, defaultName = 'index') => {
-	let updatedName = name.trim().replace(/^[^a-zA-Z_$]|[^0-9a-zA-Z_$]/ig, "_") || defaultName;
-	''.trim().re
+	let updatedName = name.trim().replace(/^[^a-zA-Z_$]|[^0-9a-zA-Z_$]/gi, '_') || defaultName;
+	''.trim().re;
 	let nameSuffix = '';
 	let i = 0;
 	while (alreadyUsedVariableNames.includes(updatedName + nameSuffix)) {
 		nameSuffix = ++i;
 	}
 	return updatedName + nameSuffix;
-}
+};
 
 const getIndexesAddStatement = (funcName, indexesVarNames) => {
 	return `config = admin.${funcName}(config, dbId, [${indexesVarNames.join(', ')}]);`;
-}
+};
 
-const getStartStatements = (dbName) => {
-	return 'const admin = require("/MarkLogic/admin.xqy");\n'
-		+ "let config = admin.getConfiguration();\n"
-		+ `const dbId = xdmp.database("${dbName}");`;
-}
+const getStartStatements = dbName => {
+	return (
+		'const admin = require("/MarkLogic/admin.xqy");\n' +
+		'let config = admin.getConfiguration();\n' +
+		`const dbId = xdmp.database("${dbName}");`
+	);
+};
 
 const getEndStatements = () => {
-	return "admin.saveConfiguration(config);";
-}
+	return 'admin.saveConfiguration(config);';
+};
 
 module.exports = {
 	getIndexes,

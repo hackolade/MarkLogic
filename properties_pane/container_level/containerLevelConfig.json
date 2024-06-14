@@ -124,11 +124,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "dataEncryption",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"default-cluster",
-					"on",
-					"off"
-				]
+				"options": ["default-cluster", "on", "off"]
 			},
 			{
 				"propertyName": "Language",
@@ -160,12 +156,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "stemmedSearches",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"off",
-					"basic",
-					"advanced",
-					"decoumpounding"
-				]
+				"options": ["off", "basic", "advanced", "decoumpounding"]
 			},
 			{
 				"propertyName": "Word searches",
@@ -292,13 +283,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "reindexerThrottle",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"1",
-					"2",
-					"3",
-					"4",
-					"5"
-				]
+				"options": ["1", "2", "3", "4", "5"]
 			},
 			{
 				"propertyName": "Reindexer timestamp",
@@ -313,11 +298,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "directoryCreation",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"automatic",
-					"manual-enforced",
-					"manual"
-				]
+				"options": ["automatic", "manual-enforced", "manual"]
 			},
 			{
 				"propertyName": "Maintain last modified",
@@ -414,11 +395,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"strict",
-					"fast",
-					"off"
-				]
+				"options": ["strict", "fast", "off"]
 			},
 			{
 				"propertyName": "Journaling",
@@ -426,11 +403,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"strict",
-					"fast",
-					"off"
-				]
+				"options": ["strict", "fast", "off"]
 			},
 			{
 				"propertyName": "Journal size",
@@ -460,10 +433,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "rangeIndexOptimize",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"facet-time",
-					"memory-size"
-				]
+				"options": ["facet-time", "memory-size"]
 			},
 			{
 				"propertyName": "Positions list max size",
@@ -478,31 +448,21 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "formatCompatibility",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"automatic",
-					"5.0",
-					"4.2"
-				]
+				"options": ["automatic", "5.0", "4.2"]
 			},
 			{
 				"propertyName": "Index detection",
 				"propertyKeyword": "indexDetection",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"automatic",
-					"none"
-				]
+				"options": ["automatic", "none"]
 			},
 			{
 				"propertyName": "Expunge locks",
 				"propertyKeyword": "expungeLocks",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"automatic",
-					"none"
-				]
+				"options": ["automatic", "none"]
 			},
 			{
 				"propertyName": "TF normalization",
@@ -528,26 +488,14 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "rebalancerThrottle",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"1",
-					"2",
-					"3",
-					"4",
-					"5"
-				]
+				"options": ["1", "2", "3", "4", "5"]
 			},
 			{
 				"propertyName": "Assignment policy",
 				"propertyKeyword": "assignmentPolicy",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"bucket",
-					"statistical",
-					"range",
-					"legacy",
-					"query"
-				]
+				"options": ["bucket", "statistical", "range", "legacy", "query"]
 			}
 		]
 	},
@@ -580,12 +528,7 @@ making sure that you maintain a proper JSON format.
 						"propertyTooltip": "Select from list of options",
 						"propertyType": "select",
 						"defaultValue": "Element",
-						"options": [
-							"Element",
-							"Attribute",
-							"Path",
-							"Field"
-						]
+						"options": ["Element", "Attribute", "Path", "Field"]
 					},
 					{
 						"propertyName": "Scalar type",
@@ -640,13 +583,16 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text",
 						"dependency": {
 							"type": "or",
-							"values": [{
-								"key": "idxType",
-								"value": "Element"
-							},{
-								"key": "idxType",
-								"value": "Attribute"
-							}]
+							"values": [
+								{
+									"key": "idxType",
+									"value": "Element"
+								},
+								{
+									"key": "idxType",
+									"value": "Attribute"
+								}
+							]
 						}
 					},
 					{
@@ -656,13 +602,16 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text",
 						"dependency": {
 							"type": "or",
-							"values": [{
-								"key": "idxType",
-								"value": "Element"
-							},{
-								"key": "idxType",
-								"value": "Attribute"
-							}]
+							"values": [
+								{
+									"key": "idxType",
+									"value": "Element"
+								},
+								{
+									"key": "idxType",
+									"value": "Attribute"
+								}
+							]
 						}
 					},
 					{
@@ -708,10 +657,7 @@ making sure that you maintain a proper JSON format.
 						"propertyTooltip": "Allow ingestion of documents that do not have matching type of data.",
 						"propertyType": "select",
 						"defaultValue": "reject",
-						"options": [
-							"ignore",
-							"reject"
-						]
+						"options": ["ignore", "reject"]
 					}
 				]
 			},
@@ -740,13 +686,7 @@ making sure that you maintain a proper JSON format.
 						"propertyTooltip": "Select from list of options",
 						"propertyType": "select",
 						"defaultValue": "Element",
-						"options": [
-							"Element",
-							"Element child",
-							"Element pair",
-							"Attribute pair",
-							"Path"
-						]
+						"options": ["Element", "Element child", "Element pair", "Attribute pair", "Path"]
 					},
 					{
 						"propertyName": "Parent namespace URI",
@@ -755,16 +695,20 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text",
 						"dependency": {
 							"type": "or",
-							"values": [{
-								"key": "idxType",
-								"value": "Element child"
-							},{
-								"key": "idxType",
-								"value": "Element pair"
-							},{
-								"key": "idxType",
-								"value": "Attribute pair"
-							}]
+							"values": [
+								{
+									"key": "idxType",
+									"value": "Element child"
+								},
+								{
+									"key": "idxType",
+									"value": "Element pair"
+								},
+								{
+									"key": "idxType",
+									"value": "Attribute pair"
+								}
+							]
 						}
 					},
 					{
@@ -774,16 +718,20 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text",
 						"dependency": {
 							"type": "or",
-							"values": [{
-								"key": "idxType",
-								"value": "Element child"
-							},{
-								"key": "idxType",
-								"value": "Element pair"
-							},{
-								"key": "idxType",
-								"value": "Attribute pair"
-							}]
+							"values": [
+								{
+									"key": "idxType",
+									"value": "Element child"
+								},
+								{
+									"key": "idxType",
+									"value": "Element pair"
+								},
+								{
+									"key": "idxType",
+									"value": "Attribute pair"
+								}
+							]
 						}
 					},
 					{
@@ -793,13 +741,16 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text",
 						"dependency": {
 							"type": "or",
-							"values": [{
-								"key": "idxType",
-								"value": "Element"
-							},{
-								"key": "idxType",
-								"value": "Element child"
-							}]
+							"values": [
+								{
+									"key": "idxType",
+									"value": "Element"
+								},
+								{
+									"key": "idxType",
+									"value": "Element child"
+								}
+							]
 						}
 					},
 					{
@@ -809,13 +760,16 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text",
 						"dependency": {
 							"type": "or",
-							"values": [{
-								"key": "idxType",
-								"value": "Element"
-							},{
-								"key": "idxType",
-								"value": "Element child"
-							}]
+							"values": [
+								{
+									"key": "idxType",
+									"value": "Element"
+								},
+								{
+									"key": "idxType",
+									"value": "Element child"
+								}
+							]
 						}
 					},
 					{
@@ -825,13 +779,16 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text",
 						"dependency": {
 							"type": "or",
-							"values": [{
-								"key": "idxType",
-								"value": "Element pair"
-							},{
-								"key": "idxType",
-								"value": "Attribute pair"
-							}]
+							"values": [
+								{
+									"key": "idxType",
+									"value": "Element pair"
+								},
+								{
+									"key": "idxType",
+									"value": "Attribute pair"
+								}
+							]
 						}
 					},
 					{
@@ -841,13 +798,16 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text",
 						"dependency": {
 							"type": "or",
-							"values": [{
-								"key": "idxType",
-								"value": "Element pair"
-							},{
-								"key": "idxType",
-								"value": "Attribute pair"
-							}]
+							"values": [
+								{
+									"key": "idxType",
+									"value": "Element pair"
+								},
+								{
+									"key": "idxType",
+									"value": "Attribute pair"
+								}
+							]
 						}
 					},
 					{
@@ -857,13 +817,16 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text",
 						"dependency": {
 							"type": "or",
-							"values": [{
-								"key": "idxType",
-								"value": "Element pair"
-							},{
-								"key": "idxType",
-								"value": "Attribute pair"
-							}]
+							"values": [
+								{
+									"key": "idxType",
+									"value": "Element pair"
+								},
+								{
+									"key": "idxType",
+									"value": "Attribute pair"
+								}
+							]
 						}
 					},
 					{
@@ -873,13 +836,16 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text",
 						"dependency": {
 							"type": "or",
-							"values": [{
-								"key": "idxType",
-								"value": "Element pair"
-							},{
-								"key": "idxType",
-								"value": "Attribute pair"
-							}]
+							"values": [
+								{
+									"key": "idxType",
+									"value": "Element pair"
+								},
+								{
+									"key": "idxType",
+									"value": "Attribute pair"
+								}
+							]
 						}
 					},
 					{
@@ -914,22 +880,23 @@ making sure that you maintain a proper JSON format.
 						"propertyTooltip": "Select the general format of the point.",
 						"propertyType": "select",
 						"defaultValue": "point",
-						"options": [
-							"point",
-							"long-lat-point"
-						],
+						"options": ["point", "long-lat-point"],
 						"dependency": {
 							"type": "or",
-							"values": [{
-								"key": "idxType",
-								"value": "Element"
-							},{
-								"key": "idxType",
-								"value": "Path"
-							},{
-								"key": "idxType",
-								"value": "Element child"
-							}]
+							"values": [
+								{
+									"key": "idxType",
+									"value": "Element"
+								},
+								{
+									"key": "idxType",
+									"value": "Path"
+								},
+								{
+									"key": "idxType",
+									"value": "Element child"
+								}
+							]
 						}
 					},
 					{
@@ -945,11 +912,9 @@ making sure that you maintain a proper JSON format.
 						"propertyTooltip": "Allow ingestion of documents that do not have matching type of data.",
 						"propertyType": "select",
 						"defaultValue": "reject",
-						"options": [
-							"ignore",
-							"reject"
-						]
-					}				]
+						"options": ["ignore", "reject"]
+					}
+				]
 			},
 			{
 				"propertyName": "Geospatial region",
@@ -997,12 +962,7 @@ making sure that you maintain a proper JSON format.
 						"propertyKeyword": "units",
 						"propertyTooltip": "Indicates which unit of measure to use for distance",
 						"propertyType": "select",
-						"options": [
-							"km",
-							"miles",
-							"feet",
-							"meters"
-						]
+						"options": ["km", "miles", "feet", "meters"]
 					},
 					{
 						"propertyName": "Geohash precision",
@@ -1013,16 +973,14 @@ making sure that you maintain a proper JSON format.
 						"minValue": 0,
 						"maxValue": 9,
 						"step": 1
-					},					{
+					},
+					{
 						"propertyName": "invalid values",
 						"propertyKeyword": "invalidValues",
 						"propertyTooltip": "Allow ingestion of documents that do not have matching type of data.",
 						"propertyType": "select",
 						"defaultValue": "reject",
-						"options": [
-							"ignore",
-							"reject"
-						]
+						"options": ["ignore", "reject"]
 					}
 				]
 			}

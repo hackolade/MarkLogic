@@ -36,7 +36,7 @@ module.exports = {
 
 	testConnection: function (connectionInfo, logger, cb, app) {
 		logInfo('Test connection', connectionInfo, logger);
-		this.connect(connectionInfo, logger, async (dbClient) => {
+		this.connect(connectionInfo, logger, async dbClient => {
 			try {
 				await dbClient.checkConnection().result();
 				logger.log('info', '', 'Test connection: Connection successful');
@@ -49,7 +49,7 @@ module.exports = {
 		});
 	},
 
-	getDbCollectionsNames: async function(connectionInfo, logger, cb, app) {
+	getDbCollectionsNames: async function (connectionInfo, logger, cb, app) {
 		const timeoutMessage = 'Getting collections/directories timeout';
 		logInfo('Retrieving databases, collections/directories lists', connectionInfo, logger);
 		logger.log('info', '', 'Getting databases, collections/directories lists');
@@ -59,11 +59,9 @@ module.exports = {
 
 		try {
 			logger.progress({ message: 'Getting database list', containerName: '', entityName: '' });
-			
+
 			const dbClient = getDBClient({ connectionInfo });
-			const dbNames = connectionInfo.database
-				? [connectionInfo.database]
-				: await getDbList(dbClient, logger);
+			const dbNames = connectionInfo.database ? [connectionInfo.database] : await getDbList(dbClient, logger);
 
 			const result = await dependencies.async.mapSeries(dbNames, async dbName => {
 				const dbClient = getDBClient({ database: dbName });
@@ -76,7 +74,7 @@ module.exports = {
 								reject(new Error(timeoutMessage));
 							}, timeoutValue);
 						});
-					}
+					};
 
 					switch (connectionInfo.documentsOrganizing) {
 						case 'directories':
@@ -88,10 +86,9 @@ module.exports = {
 								getDBCollections({
 									dbClient,
 									logger,
-									minDocumentsPerCollection:
-										connectionInfo.minDocuments,
+									minDocumentsPerCollection: connectionInfo.minDocuments,
 									collections: connectionInfo.collections,
-									collectionsMatcher: connectionInfo.collectionsMatcher
+									collectionsMatcher: connectionInfo.collectionsMatcher,
 								}),
 								getTimeoutHandler(),
 							]);
@@ -104,17 +101,21 @@ module.exports = {
 					if (err.message !== timeoutMessage) {
 						throw err;
 					}
-					logger.progress({ message: 'Error getting collections list', containerName: dbName, entityName: '' });
+					logger.progress({
+						message: 'Error getting collections list',
+						containerName: dbName,
+						entityName: '',
+					});
 					logger.log('error', err, `Retrieving collections/directories list for "${dbName}" DB`);
 					return null;
 				} finally {
 					clearTimeout(timeoutHandler);
 				}
-				
+
 				return {
 					dbCollections,
 					dbName,
-				}
+				};
 			});
 
 			cb(null, result.filter(Boolean));
@@ -126,10 +127,10 @@ module.exports = {
 		}
 	},
 
-	getDbCollectionsData: async function(data, logger, cb, app) {
+	getDbCollectionsData: async function (data, logger, cb, app) {
 		logger.log('info', data, 'Retrieving documents', data.hiddenKeys);
 		setDependencies(app);
-		
+
 		const recordSamplingSettings = data.recordSamplingSettings;
 		const maxFetchOperationsAtATime = 10;
 
@@ -143,53 +144,68 @@ module.exports = {
 
 				const containerProperties = await getDBProperties(dbClient, dbName, logger);
 				const indexes = await getIndexes(dbClient, dbName, logger);
-			
-				const entities = await dependencies.async.mapLimit(entityNames, maxFetchOperationsAtATime, async entityName => {
-					logger.log('info', '', `Retrieving "${dbName}:${entityName}" documents started`);
-					let documents;
-					if (documentOrganizationType === DOCUMENTS_ORGANIZING_COLLECTIONS) {
-						if (entityName === UNDEFINED_COLLECTION_NAME) {
-							const collectionNames = await getDBCollections({ dbClient, logger });
-							if (collectionNames.length > 1000) {
-								documents = [];
+
+				const entities = await dependencies.async.mapLimit(
+					entityNames,
+					maxFetchOperationsAtATime,
+					async entityName => {
+						logger.log('info', '', `Retrieving "${dbName}:${entityName}" documents started`);
+						let documents;
+						if (documentOrganizationType === DOCUMENTS_ORGANIZING_COLLECTIONS) {
+							if (entityName === UNDEFINED_COLLECTION_NAME) {
+								const collectionNames = await getDBCollections({ dbClient, logger });
+								if (collectionNames.length > 1000) {
+									documents = [];
+								} else {
+									documents = await getUndefinedCollectionDocuments(
+										collectionNames,
+										dbClient,
+										recordSamplingSettings,
+									);
+								}
 							} else {
-								documents = await getUndefinedCollectionDocuments(collectionNames, dbClient, recordSamplingSettings);
+								documents = await getCollectionDocuments(entityName, dbClient, recordSamplingSettings);
 							}
 						} else {
-							documents = await getCollectionDocuments(entityName, dbClient, recordSamplingSettings);
+							documents = await getDirectoryDocuments(entityName || '', dbClient, recordSamplingSettings);
 						}
-					} else {
-						documents = await getDirectoryDocuments(entityName || '', dbClient, recordSamplingSettings);
-					}
-					logger.progress({ message: 'Sample documents loaded', containerName: dbName, entityName });					
-					logger.log('info', '', `Retrieving "${dbName}:${entityName}" documents finished`);
+						logger.progress({ message: 'Sample documents loaded', containerName: dbName, entityName });
+						logger.log('info', '', `Retrieving "${dbName}:${entityName}" documents finished`);
 
-					if (!data.includeEmptyCollection && documents.length === 0) {
-						return null;
-					}
-					return {
-						dbName,
-						collectionName: entityName  === UNDEFINED_COLLECTION_NAME ? 'Undefined collection' : entityName || '',
-						documents,
-						entityLevel: {
-							storeAsCollDir: DOCUMENTS_ORGANIZING_COLLECTIONS ? 'collection' : 'directory'
-						},
-					};
-				});
-				
+						if (!data.includeEmptyCollection && documents.length === 0) {
+							return null;
+						}
+						return {
+							dbName,
+							collectionName:
+								entityName === UNDEFINED_COLLECTION_NAME ? 'Undefined collection' : entityName || '',
+							documents,
+							entityLevel: {
+								storeAsCollDir: DOCUMENTS_ORGANIZING_COLLECTIONS ? 'collection' : 'directory',
+							},
+						};
+					},
+				);
+
 				releaseDBClient(dbClient);
-				return getEntityDataPackage(entities.filter(Boolean), documentOrganizationType, containerProperties, indexes, data.fieldInference);
+				return getEntityDataPackage(
+					entities.filter(Boolean),
+					documentOrganizationType,
+					containerProperties,
+					indexes,
+					data.fieldInference,
+				);
 			});
 
 			logger.progress({ message: 'Reverse-Engineering completed', containerName: '', entityName: '' });
-			
+
 			const dbCollectionsData = dependencies.lodash.flatten(result);
 			cb(null, dbCollectionsData);
 		} catch (err) {
 			logger.log('error', err, 'Retrieving collections/directories documents');
 			cb(prepareError(err));
 		}
-	}
+	},
 };
 
 const logInfo = (step, connectionInfo, logger) => {

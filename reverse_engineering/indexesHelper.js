@@ -14,7 +14,7 @@ const getIndexes = async (dbClient, dbName, logger) => {
 		logger.log('error', err, 'Retrieving DB indexes: ' + dbName);
 		return {};
 	}
-}
+};
 
 const getRangeIndexes = async (dbClient, dbName) => {
 	const rangeIndexesConfig = [
@@ -29,10 +29,10 @@ const getRangeIndexes = async (dbClient, dbName) => {
 		const mappedData = indexesData.map(item.mapper);
 		return mappedData;
 	}, []);
-	
+
 	const allRangeIndexes = await Promise.all(rangeIndexes);
 	return flatten(allRangeIndexes);
-}
+};
 
 const getGeoPointIndexes = async (dbClient, dbName) => {
 	const geoPointIndexesConfig = [
@@ -48,18 +48,18 @@ const getGeoPointIndexes = async (dbClient, dbName) => {
 		const mappedData = indexesData.map(item.mapper);
 		return mappedData;
 	}, []);
-	
+
 	const allGeoPointIndexesConfig = await Promise.all(geoPointIndexes);
 	return flatten(allGeoPointIndexesConfig);
-}
+};
 
 const getGeoSpatialRegionIndexes = async (dbClient, dbName) => {
 	const geoRegionIndexesConfig = getGeoRegionIndexConfig(dbName);
 	const indexesData = await fetchIndexData(dbClient, geoRegionIndexesConfig.query);
 	return indexesData.map(geoRegionIndexesConfig.mapper);
-}
+};
 
-const getElementRangeIndexConfig = (dbName) => {
+const getElementRangeIndexConfig = dbName => {
 	const indexFunc = 'database-get-range-element-indexes';
 	const query = getIndexQuery(indexFunc, dbName);
 
@@ -78,9 +78,9 @@ const getElementRangeIndexConfig = (dbName) => {
 	};
 
 	return { query, mapper };
-}
+};
 
-const getAttributeRangeIndexConfig = (dbName) => {
+const getAttributeRangeIndexConfig = dbName => {
 	const indexFunc = 'database-get-range-element-attribute-indexes';
 	const query = getIndexQuery(indexFunc, dbName);
 
@@ -101,9 +101,9 @@ const getAttributeRangeIndexConfig = (dbName) => {
 	};
 
 	return { query, mapper };
-}
+};
 
-const getPathRangeIndexConfig = (dbName) => {
+const getPathRangeIndexConfig = dbName => {
 	const indexFunc = 'database-get-range-path-indexes';
 	const query = getIndexQuery(indexFunc, dbName);
 
@@ -121,9 +121,9 @@ const getPathRangeIndexConfig = (dbName) => {
 	};
 
 	return { query, mapper };
-}
+};
 
-const getFieldRangeIndexConfig = (dbName) => {
+const getFieldRangeIndexConfig = dbName => {
 	const indexFunc = 'database-get-range-field-indexes';
 	const query = getIndexQuery(indexFunc, dbName);
 
@@ -141,9 +141,9 @@ const getFieldRangeIndexConfig = (dbName) => {
 	};
 
 	return { query, mapper };
-}
+};
 
-const getElementGeoSpatialPointIndexConfig = (dbName) => {
+const getElementGeoSpatialPointIndexConfig = dbName => {
 	const indexFunc = 'database-get-geospatial-element-indexes';
 	const query = getIndexQuery(indexFunc, dbName);
 
@@ -162,9 +162,9 @@ const getElementGeoSpatialPointIndexConfig = (dbName) => {
 	};
 
 	return { query, mapper };
-}
+};
 
-const getElementChildGeoSpatialPointIndexConfig = (dbName) => {
+const getElementChildGeoSpatialPointIndexConfig = dbName => {
 	const indexFunc = 'database-get-geospatial-element-child-indexes';
 	const query = getIndexQuery(indexFunc, dbName);
 
@@ -185,9 +185,9 @@ const getElementChildGeoSpatialPointIndexConfig = (dbName) => {
 	};
 
 	return { query, mapper };
-}
+};
 
-const getElementPairGeoSpatialPointIndexConfig = (dbName) => {
+const getElementPairGeoSpatialPointIndexConfig = dbName => {
 	const indexFunc = 'database-get-geospatial-element-pair-indexes';
 	const query = getIndexQuery(indexFunc, dbName);
 
@@ -209,9 +209,9 @@ const getElementPairGeoSpatialPointIndexConfig = (dbName) => {
 	};
 
 	return { query, mapper };
-}
+};
 
-const getAttributePairGeoSpatialPointIndexConfig = (dbName) => {
+const getAttributePairGeoSpatialPointIndexConfig = dbName => {
 	const indexFunc = 'database-get-geospatial-element-attribute-pair-indexes';
 	const query = getIndexQuery(indexFunc, dbName);
 
@@ -233,9 +233,9 @@ const getAttributePairGeoSpatialPointIndexConfig = (dbName) => {
 	};
 
 	return { query, mapper };
-}
+};
 
-const getPathGeoSpatialPointIndexConfig = (dbName) => {
+const getPathGeoSpatialPointIndexConfig = dbName => {
 	const indexFunc = 'database-get-geospatial-path-indexes';
 	const query = getIndexQuery(indexFunc, dbName);
 
@@ -253,9 +253,9 @@ const getPathGeoSpatialPointIndexConfig = (dbName) => {
 	};
 
 	return { query, mapper };
-}
+};
 
-const getGeoRegionIndexConfig = (dbName) => {
+const getGeoRegionIndexConfig = dbName => {
 	const indexFunc = 'database-get-geospatial-region-path-indexes';
 	const query = getIndexQuery(indexFunc, dbName);
 
@@ -273,37 +273,37 @@ const getGeoRegionIndexConfig = (dbName) => {
 	};
 
 	return { query, mapper };
-}
+};
 
 const fetchIndexData = async (dbClient, query) => {
 	const response = await dbClient.xqueryEval(query).result();
 	return sharedResponseMapper(response);
-} 
+};
 
 const getIndexQuery = (indexFuncName, dbName) => {
 	return `xquery version "1.0-ml"; import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy"; let $config := admin:get-configuration() return admin:${indexFuncName}($config, xdmp:database("${dbName}"));`;
-}
+};
 
-const sharedResponseMapper = (response) => {
+const sharedResponseMapper = response => {
 	if (!Array.isArray(response)) {
 		return [];
 	}
 
 	return response.map(item => {
-		return convert.xml2js(item.value, {compact: true, textKey: 'value'});
-	})
+		return convert.xml2js(item.value, { compact: true, textKey: 'value' });
+	});
 };
 
 const getXmlAttributeValue = (data = {}, keyword) => {
 	return (data[keyword] || {}).value;
-}
+};
 
 const flatten = (arr = []) => {
 	return arr.reduce((acc, data) => {
 		return [...acc, ...data];
 	}, []);
-}
+};
 
 module.exports = {
-	getIndexes
+	getIndexes,
 };
