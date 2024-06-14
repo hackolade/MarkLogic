@@ -145,7 +145,18 @@ making sure that you maintain a proper JSON format.
 			"comments"
 		],
 		"boolean": "boolean",
-		"object": "document",
+		"object": [
+			"schemaId",
+			"type",
+			"description",
+			"dependencies",
+			"required",
+			"primaryKey",
+			"minProperties",
+			"maxProperties",
+			"additionalProperties",
+			"comments"
+		],
 		"array": "array",
 		"null": "null",
 		"binary": "binary",
