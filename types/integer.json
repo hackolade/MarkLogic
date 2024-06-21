@@ -1,0 +1,46 @@
+{
+	"name": "integer",
+	"erdAbbreviation": "<int>",
+	"dtdAbbreviation": "{123}",
+	"parentType": "numeric",
+	"sample": 15,
+	"useSample": true,
+	"defaultValues": {
+		"unit": "",
+		"minimum": "",
+		"maximum": "",
+		"multipleOf": "",
+		"divisibleBy": "",
+		"default": "",
+		"primaryKey": false,
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"enum": [],
+		"mode": "",
+		"sample": "",
+		"nullable": false
+	},
+	"descriptor": [
+		{
+			"schema": {
+				"mode": "int32"
+			},
+			"capacity": 4
+		},
+		{
+			"schema": {
+				"mode": "int64"
+			},
+			"capacity": 8
+		},
+		{
+			"schema": {
+				"mode": "int64"
+			},
+			"capacity": 12
+		}
+	]
+}
