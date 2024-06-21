@@ -40,7 +40,7 @@
     "disabled": false,
     "dependencies": {
         "lodash": "4.17.21",
-        "marklogic": "2.9.1",
+        "marklogic": "3.4.0",
         "xml-js": "1.6.11"
     },
     "lint-staged": {
