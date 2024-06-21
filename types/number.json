@@ -23,5 +23,13 @@
 		"enum": [],
 		"mode": "",
 		"sample": ""
-	}
+	},
+	"descriptor": [
+		{
+			"mode": "floating"
+		},
+		{
+			"mode": "decimal"
+		}
+	]
 }
