@@ -87,6 +87,7 @@ making sure that you maintain a proper JSON format.
 			"name",
 			"schemaId",
 			"type",
+			"format",
 			"description",
 			"dependencies",
 			"required",
@@ -98,7 +99,6 @@ making sure that you maintain a proper JSON format.
 			"minLength",
 			"maxLength",
 			"pattern",
-			"format",
 			"enum",
 			"sample",
 			"comments",
@@ -109,12 +109,10 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "text",
 				"arrayItemDisabled": true,
 				"enableForReference": true,
-				"disabledOnCondition": [
-					{
+				"disabledOnCondition": [{
 						"key": "key",
 						"value": true
-					},
-					{
+					}, {
 						"key": "documentKind",
 						"value": true
 					}
@@ -144,19 +142,31 @@ making sure that you maintain a proper JSON format.
 			"sample",
 			"comments"
 		],
-		"boolean": "boolean",
-		"object": [
+		"integer": [
+			"name",
 			"schemaId",
 			"type",
 			"description",
 			"dependencies",
 			"required",
 			"primaryKey",
-			"minProperties",
-			"maxProperties",
-			"additionalProperties",
+			"foreignCollection",
+			"foreignField",
+			"relationshipType",
+			"default",
+			"unit",
+			"minimum",
+			"exclusiveMinimum",
+			"maximum",
+			"exclusiveMaximum",
+			"multipleOf",
+			"divisibleBy",
+			"enum",
+			"sample",
 			"comments"
 		],
+		"boolean": "boolean",
+		"object": "document",
 		"array": "array",
 		"null": "null",
 		"binary": "binary",
@@ -164,6 +174,14 @@ making sure that you maintain a proper JSON format.
 		"triple": "document",
 		"quad": "document",
 		"___2": [],
-		"geoSpatial": ["name", "schemaId", "type", "description", "required", "comments", "subtype"]
+		"geoSpatial": [
+			"name",
+			"schemaId",
+			"type",
+			"description",
+			"required",
+			"comments",
+			"subtype"
+		]
 	}
 }
