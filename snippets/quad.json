@@ -1,31 +1,39 @@
 {
 	"name": "quad",
 	"parentType": "document",
-	"properties": [{
-		"name": "quadName",
-		"type": "string",
-		"required": true
-	},{
-		"name": "subject",
-		"type": "string",
-		"required": true
-	}, {
-		"name": "predicate",
-		"type": "string",
-		"required": true
-	}, {
-		"name": "object",
-		"type": "object",
-		"required": true,
-		"properties": [{
-			"name": "datatype",
+	"properties": [
+		{
+			"name": "quadName",
 			"type": "string",
 			"required": true
-		}, {
-			"name": "value",
+		},
+		{
+			"name": "subject",
 			"type": "string",
+			"required": true
+		},
+		{
+			"name": "predicate",
+			"type": "string",
+			"required": true
+		},
+		{
+			"name": "object",
+			"type": "object",
 			"required": true,
-			"format": "uri"
-		}]
-	}]
+			"properties": [
+				{
+					"name": "datatype",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "value",
+					"type": "string",
+					"required": true,
+					"format": "uri"
+				}
+			]
+		}
+	]
 }

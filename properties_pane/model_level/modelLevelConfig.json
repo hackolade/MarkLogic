@@ -90,9 +90,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "DB vendor",
 				"propertyType": "select",
-				"options": [
-					"MarkLogic"
-				],
+				"options": ["MarkLogic"],
 				"disabledOption": true
 			},
 			{
@@ -101,13 +99,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "DB version",
 				"propertyType": "select",
-				"options": [
-					"8.x",
-					"9.x",
-					"10.x",
-					"11.x",
-					"12.x"
-				],
+				"options": ["8.x", "9.x", "10.x", "11.x", "12.x"],
 				"disabledOption": true
 			},
 			{

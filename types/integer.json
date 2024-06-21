@@ -1,6 +1,6 @@
 {
-	"name": "number",
-	"erdAbbreviation": "<num>",
+	"name": "integer",
+	"erdAbbreviation": "<int>",
 	"dtdAbbreviation": "{123}",
 	"parentType": "numeric",
 	"sample": 15,
@@ -8,9 +8,7 @@
 	"defaultValues": {
 		"unit": "",
 		"minimum": "",
-		"exclusiveMinimum": false,
 		"maximum": "",
-		"exclusiveMaximum": false,
 		"multipleOf": "",
 		"divisibleBy": "",
 		"default": "",
@@ -22,14 +20,12 @@
 		"foreignField": [],
 		"enum": [],
 		"mode": "",
-		"sample": ""
+		"sample": "",
+		"nullable": false
 	},
 	"descriptor": [
 		{
-			"mode": "floating"
-		},
-		{
-			"mode": "decimal"
+			"capacity": 4
 		}
 	]
 }
