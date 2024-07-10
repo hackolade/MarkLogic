@@ -163,7 +163,7 @@ const getDocumentOrganizingType = () => {
 };
 
 const getCollectionDocuments = async (collectionName, dbClient, recordSamplingSettings) => {
-	const samplingCount = await getCollectionSamplingCount(collectionName, recordSamplingSettings, dbClient);
+	const samplingCount = await getCollectionSamplingCount(dbClient, collectionName, recordSamplingSettings);
 	const documents = await dbClient.documents
 		.query(
 			qb
@@ -187,7 +187,7 @@ const getUndefinedCollectionDocuments = async (collectionNames, dbClient, record
 			)
 			.result();
 	} else {
-		const samplingCount = await getDirectorySamplingCount('/', recordSamplingSettings, true, dbClient);
+		const samplingCount = await getDirectorySamplingCount(dbClient, '/', recordSamplingSettings, true);
 		documents = await dbClient.documents
 			.query(
 				qb
@@ -204,7 +204,7 @@ const getDirectoryDocuments = async (directoryName, dbClient, recordSamplingSett
 	if (!directoryName) {
 		return [];
 	}
-	const samplingCount = await getDirectorySamplingCount(directoryName, recordSamplingSettings, dbClient);
+	const samplingCount = await getDirectorySamplingCount(dbClient, directoryName, recordSamplingSettings);
 	const documents = await dbClient.documents
 		.query(
 			qb
@@ -301,20 +301,20 @@ const getDBProperties = async (dbClient, dbName, logger) => {
 	}, {});
 };
 
-const getDirectorySamplingCount = async (directoryName, recordSamplingSettings, recursive, dbClient) => {
+const getDirectorySamplingCount = async (dbClient, directoryName, recordSamplingSettings, recursive) => {
 	if (recordSamplingSettings.active === 'absolute') {
 		return Number(recordSamplingSettings.absolute.value);
 	} else {
-		const documentsCount = await getDirectoryDocumentsCount(directoryName, recursive, dbClient);
+		const documentsCount = await getDirectoryDocumentsCount(dbClient, directoryName, recursive);
 		return getSampleDocSize(documentsCount, recordSamplingSettings);
 	}
 };
 
-const getCollectionSamplingCount = async (collectionName, recordSamplingSettings, dbClient) => {
+const getCollectionSamplingCount = async (dbClient, collectionName, recordSamplingSettings) => {
 	if (recordSamplingSettings.active === 'absolute') {
 		return Number(recordSamplingSettings.absolute.value);
 	} else {
-		const documentsCount = await getCollectionDocumentsCount(collectionName, dbClient);
+		const documentsCount = await getCollectionDocumentsCount(dbClient, collectionName);
 		return getSampleDocSize(documentsCount, recordSamplingSettings);
 	}
 };
@@ -329,13 +329,13 @@ const getSampleDocSize = (count, recordSamplingSettings) => {
 	return Math.min(limit, recordSamplingSettings.maxValue);
 };
 
-const getCollectionDocumentsCount = async (collectionName, dbClient) => {
+const getCollectionDocumentsCount = async (dbClient, collectionName) => {
 	const query = `xdmp:estimate(cts:search(doc(), cts:collection-query("${collectionName}")))`;
 	const response = await dbClient.xqueryEval(query).result();
 	return _.get(response, '[0].value');
 };
 
-const getDirectoryDocumentsCount = async (directoryName, recursive = false, dbClient) => {
+const getDirectoryDocumentsCount = async (dbClient, directoryName, recursive = false) => {
 	const query = recursive
 		? `xdmp:estimate(cts:search(fn:doc(), cts:directory-query("${directoryName}", "infinity")))`
 		: `xdmp:estimate(cts:search(fn:doc(), cts:directory-query("${directoryName}")))`;
