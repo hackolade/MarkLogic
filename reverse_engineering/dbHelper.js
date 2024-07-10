@@ -89,7 +89,7 @@ const getDBCollections = async ({ dbClient, logger, minDocumentsPerCollection, c
 
 	let response;
 	let collectionsList;
-	const collectionsNames = collections && collections.split(',').map(item => item.trim());
+	const collectionsNames = collections?.split(',').map(item => item.trim());
 	const isCollectionsListSpecified = Array.isArray(collectionsNames) && collectionsNames.length > 0;
 
 	try {
@@ -332,7 +332,7 @@ const getSampleDocSize = (count, recordSamplingSettings) => {
 
 const getCollectionDocumentsCount = async collectionName => {
 	const query = `xdmp:estimate(cts:search(doc(), cts:collection-query("${collectionName}")))`;
-	const response = await dbClient.xqueryEval(query).result();
+	const response = await dbClient?.xqueryEval(query).result();
 	return _.get(response, '[0].value');
 };
 
@@ -340,7 +340,7 @@ const getDirectoryDocumentsCount = async (directoryName, recursive = false) => {
 	const query = recursive
 		? `xdmp:estimate(cts:search(fn:doc(), cts:directory-query("${directoryName}", "infinity")))`
 		: `xdmp:estimate(cts:search(fn:doc(), cts:directory-query("${directoryName}")))`;
-	const response = await dbClient.xqueryEval(query).result();
+	const response = await dbClient?.xqueryEval(query).result();
 	return _.get(response, '[0].value');
 };
 

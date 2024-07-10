@@ -68,7 +68,7 @@ const getGeoRegionIndexes = (geoRegionIndexesData, alreadyUsedVariableNames) => 
 	return getIndexesStatementsByType(geoRegionIndexesData, geoRegionIndexHandlers, alreadyUsedVariableNames);
 };
 
-const getIndexesStatementsByType = (indexesData = [], handlersConfig, alreadyUsedVariableNames) => {
+const getIndexesStatementsByType = (indexesData = [], handlersConfig = [], alreadyUsedVariableNames = []) => {
 	let indexesVarNames = [];
 	const statements = handlersConfig.reduce((acc, indexHandler) => {
 		const indexTypeVarNames = [];
@@ -262,9 +262,9 @@ const mapBoolean = value => {
 	return value === true ? 'fn.true()' : 'fn.false()';
 };
 
-const getCheckedVariableName = (name = '', alreadyUsedVariableNames, defaultName = 'index') => {
-	let updatedName = name.trim().replace(/^[^a-zA-Z_$]|[^0-9a-zA-Z_$]/gi, '_') || defaultName;
-	''.trim().re;
+const getCheckedVariableName = (name = '', alreadyUsedVariableNames = [], defaultName = 'index') => {
+	let updatedName = name.trim().replace(/(^[^A-Z_$])|[^0-9A-Z_$]/gi, '_') || defaultName;
+
 	let nameSuffix = '';
 	let i = 0;
 	while (alreadyUsedVariableNames.includes(updatedName + nameSuffix)) {
