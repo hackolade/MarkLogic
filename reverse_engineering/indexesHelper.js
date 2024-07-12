@@ -294,8 +294,8 @@ const sharedResponseMapper = response => {
 	});
 };
 
-const getXmlAttributeValue = (data = {}, keyword) => {
-	return (data[keyword] || {}).value;
+const getXmlAttributeValue = (data = {}, keyword = '') => {
+	return data[keyword]?.value;
 };
 
 const flatten = (arr = []) => {

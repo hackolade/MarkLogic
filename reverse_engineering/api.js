@@ -70,18 +70,18 @@ module.exports = {
 				try {
 					const getTimeoutHandler = () => {
 						return new Promise((resolve, reject) => {
-							timeoutHandler = setTimeout(() => {
-								reject(new Error(timeoutMessage));
-							}, timeoutValue);
+							const callback = () => reject(new Error(timeoutMessage));
+							timeoutHandler = setTimeout(callback, timeoutValue);
 						});
 					};
 
 					switch (connectionInfo.documentsOrganizing) {
-						case 'directories':
+						case 'directories': {
 							dbCollections = await getDBDirectories(dbClient, logger);
 							setDocumentsOrganizationType(DOCUMENTS_ORGANIZING_DIRECTORIES);
 							break;
-						default:
+						}
+						default: {
 							dbCollections = await Promise.race([
 								getDBCollections({
 									dbClient,
@@ -96,6 +96,7 @@ module.exports = {
 								dbCollections.push(UNDEFINED_COLLECTION_NAME);
 							}
 							setDocumentsOrganizationType(DOCUMENTS_ORGANIZING_COLLECTIONS);
+						}
 					}
 				} catch (err) {
 					if (err.message !== timeoutMessage) {
