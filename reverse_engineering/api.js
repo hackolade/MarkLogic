@@ -30,7 +30,7 @@ module.exports = {
 		cb(dbClient);
 	},
 
-	disconnect: function (connectionInfo, cb) {
+	disconnect: function (connectionInfo, logger, cb, app) {
 		cb();
 	},
 
@@ -45,7 +45,7 @@ module.exports = {
 				logger.log('info', '', 'Test connection: Connection failed');
 				cb(prepareError(err));
 			}
-			this.disconnect(connectionInfo, () => {});
+			this.disconnect(connectionInfo, logger, () => {});
 		});
 	},
 
