@@ -1,4 +1,5 @@
-'use strict';
+const _ = require('lodash');
+const async = require('async');
 const marklogic = require('marklogic');
 const {
 	DOCUMENTS_ORGANIZING_COLLECTIONS,
@@ -18,9 +19,7 @@ const {
 } = require('./dbHelper');
 const { prepareError } = require('./generalHelper');
 const logHelper = require('./logHelper');
-const { setDependencies } = require('./appDependencies');
 const { getIndexes } = require('./indexesHelper');
-const { dependencies } = require('./appDependencies');
 const UNDEFINED_COLLECTION_NAME = 'Documents with undefined collection';
 
 module.exports = {
@@ -53,7 +52,6 @@ module.exports = {
 		const timeoutMessage = 'Getting collections/directories timeout';
 		logInfo('Retrieving databases, collections/directories lists', connectionInfo, logger);
 		logger.log('info', '', 'Getting databases, collections/directories lists');
-		setDependencies(app);
 		const timeoutValue = connectionInfo.queryRequestTimeout || 1000 * 60 * 2;
 		let timeoutHandler;
 
@@ -63,7 +61,7 @@ module.exports = {
 			const dbClient = getDBClient({ connectionInfo });
 			const dbNames = connectionInfo.database ? [connectionInfo.database] : await getDbList(dbClient, logger);
 
-			const result = await dependencies.async.mapSeries(dbNames, async dbName => {
+			const result = await async.mapSeries(dbNames, async dbName => {
 				const dbClient = getDBClient({ database: dbName });
 				let dbCollections = [];
 
@@ -130,15 +128,13 @@ module.exports = {
 
 	getDbCollectionsData: async function (data, logger, cb, app) {
 		logger.log('info', data, 'Retrieving documents', data.hiddenKeys);
-		setDependencies(app);
-
 		const recordSamplingSettings = data.recordSamplingSettings;
 		const maxFetchOperationsAtATime = 10;
 
 		try {
 			const documentOrganizationType = getDocumentOrganizingType();
 
-			const result = await dependencies.async.mapSeries(data.collectionData.dataBaseNames, async dbName => {
+			const result = await async.mapSeries(data.collectionData.dataBaseNames, async dbName => {
 				logger.progress({ message: 'Documents sampling started', containerName: dbName, entityName: '' });
 				const entityNames = data.collectionData.collections[dbName] || [];
 				const dbClient = getDBClient({ database: dbName });
@@ -146,47 +142,43 @@ module.exports = {
 				const containerProperties = await getDBProperties(dbClient, dbName, logger);
 				const indexes = await getIndexes(dbClient, dbName, logger);
 
-				const entities = await dependencies.async.mapLimit(
-					entityNames,
-					maxFetchOperationsAtATime,
-					async entityName => {
-						logger.log('info', '', `Retrieving "${dbName}:${entityName}" documents started`);
-						let documents;
-						if (documentOrganizationType === DOCUMENTS_ORGANIZING_COLLECTIONS) {
-							if (entityName === UNDEFINED_COLLECTION_NAME) {
-								const collectionNames = await getDBCollections({ dbClient, logger });
-								if (collectionNames.length > 1000) {
-									documents = [];
-								} else {
-									documents = await getUndefinedCollectionDocuments(
-										collectionNames,
-										dbClient,
-										recordSamplingSettings,
-									);
-								}
+				const entities = await async.mapLimit(entityNames, maxFetchOperationsAtATime, async entityName => {
+					logger.log('info', '', `Retrieving "${dbName}:${entityName}" documents started`);
+					let documents;
+					if (documentOrganizationType === DOCUMENTS_ORGANIZING_COLLECTIONS) {
+						if (entityName === UNDEFINED_COLLECTION_NAME) {
+							const collectionNames = await getDBCollections({ dbClient, logger });
+							if (collectionNames.length > 1000) {
+								documents = [];
 							} else {
-								documents = await getCollectionDocuments(entityName, dbClient, recordSamplingSettings);
+								documents = await getUndefinedCollectionDocuments(
+									collectionNames,
+									dbClient,
+									recordSamplingSettings,
+								);
 							}
 						} else {
-							documents = await getDirectoryDocuments(entityName || '', dbClient, recordSamplingSettings);
+							documents = await getCollectionDocuments(entityName, dbClient, recordSamplingSettings);
 						}
-						logger.progress({ message: 'Sample documents loaded', containerName: dbName, entityName });
-						logger.log('info', '', `Retrieving "${dbName}:${entityName}" documents finished`);
+					} else {
+						documents = await getDirectoryDocuments(entityName || '', dbClient, recordSamplingSettings);
+					}
+					logger.progress({ message: 'Sample documents loaded', containerName: dbName, entityName });
+					logger.log('info', '', `Retrieving "${dbName}:${entityName}" documents finished`);
 
-						if (!data.includeEmptyCollection && documents.length === 0) {
-							return null;
-						}
-						return {
-							dbName,
-							collectionName:
-								entityName === UNDEFINED_COLLECTION_NAME ? 'Undefined collection' : entityName || '',
-							documents,
-							entityLevel: {
-								storeAsCollDir: DOCUMENTS_ORGANIZING_COLLECTIONS ? 'collection' : 'directory',
-							},
-						};
-					},
-				);
+					if (!data.includeEmptyCollection && documents.length === 0) {
+						return null;
+					}
+					return {
+						dbName,
+						collectionName:
+							entityName === UNDEFINED_COLLECTION_NAME ? 'Undefined collection' : entityName || '',
+						documents,
+						entityLevel: {
+							storeAsCollDir: DOCUMENTS_ORGANIZING_COLLECTIONS ? 'collection' : 'directory',
+						},
+					};
+				});
 
 				releaseDBClient(dbClient);
 				return getEntityDataPackage(
@@ -200,7 +192,7 @@ module.exports = {
 
 			logger.progress({ message: 'Reverse-Engineering completed', containerName: '', entityName: '' });
 
-			const dbCollectionsData = dependencies.lodash.flatten(result);
+			const dbCollectionsData = _.flatten(result);
 			cb(null, dbCollectionsData);
 		} catch (err) {
 			logger.log('error', err, 'Retrieving collections/directories documents');
