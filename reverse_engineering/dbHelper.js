@@ -1,9 +1,9 @@
+const _ = require('lodash');
+const async = require('async');
 const marklogic = require('marklogic');
 const qb = marklogic.queryBuilder;
 const fs = require('fs');
 const schemaHelper = require('./schemaHelper');
-let _;
-const { dependencies } = require('./appDependencies');
 const { getDBPropertiesConfig } = require('./dbPropertiesHelper');
 
 const DOCUMENTS_ORGANIZING_COLLECTIONS = 'collections';
@@ -11,8 +11,6 @@ const DOCUMENTS_ORGANIZING_DIRECTORIES = 'directories';
 
 let documentOrganizingType = null;
 let connectionConfig = {};
-
-const setDependencies = ({ lodash }) => (_ = lodash);
 
 const getDBClient = ({ connectionInfo = null, database = null }) => {
 	if (connectionInfo) {
@@ -93,10 +91,10 @@ const getDBCollections = async ({ dbClient, logger, minDocumentsPerCollection, c
 
 	try {
 		if (isCollectionsListSpecified) {
-			return await dependencies.async.filterSeries(collectionsNames, async collectionName => {
+			return await async.filterSeries(collectionsNames, async collectionName => {
 				const isCollectionExistQuery = `xdmp:exists(collection("${collectionName}"))`;
 				const isCollectionExistResult = await dbClient.xqueryEval(isCollectionExistQuery).result();
-				return dependencies.lodash.get(isCollectionExistResult, ['0', 'value'], false);
+				return _.get(isCollectionExistResult, ['0', 'value'], false);
 			});
 		}
 
@@ -218,7 +216,6 @@ const getDirectoryDocuments = async (directoryName, dbClient, recordSamplingSett
 };
 
 const getEntityDataPackage = (entities, documentOrganizationType, containerProperties, indexes, fieldInference) => {
-	setDependencies(dependencies);
 	return entities.map(entity => {
 		let parentDirectoryName = '';
 		if (documentOrganizationType === DOCUMENTS_ORGANIZING_DIRECTORIES) {
@@ -270,8 +267,6 @@ const setDocumentsOrganizationType = type => {
 };
 
 const getDBProperties = async (dbClient, dbName, logger) => {
-	setDependencies(dependencies);
-
 	const propertiesConfig = getDBPropertiesConfig(dbName);
 
 	const defaultResponseMapper = response => {

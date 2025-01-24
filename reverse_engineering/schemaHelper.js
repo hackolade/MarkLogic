@@ -1,7 +1,4 @@
-let _;
-const { dependencies } = require('./appDependencies');
-
-const setDependencies = ({ lodash }) => (_ = lodash);
+const _ = require('lodash');
 
 const snippetsPath = '../snippets/';
 
@@ -27,7 +24,6 @@ module.exports = {
 	},
 
 	getSchema(templateDocument, parentDirectory) {
-		setDependencies(dependencies);
 		const schema = {
 			...this.getSchemaTemplate(),
 			...this.getType(templateDocument),
