@@ -11,9 +11,6 @@ module.exports = {
 
 	async applyToInstance(data, logger, cb, app) {
 		try {
-			logger.clear();
-			logger.log('info', data, data.hiddenKeys);
-
 			if (!data.script) {
 				return cb({ message: 'Empty script' });
 			}
@@ -35,8 +32,6 @@ module.exports = {
 	},
 
 	async testConnection(connectionInfo, logger, cb, app) {
-		logger.clear();
-		logger.log('info', connectionInfo, 'Test connection', connectionInfo.hiddenKeys);
 		try {
 			const client = getDBClient(connectionInfo);
 			await testConnection(client);

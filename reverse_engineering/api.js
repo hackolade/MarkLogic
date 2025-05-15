@@ -18,7 +18,6 @@ const {
 	getDbList,
 } = require('./dbHelper');
 const { prepareError } = require('./generalHelper');
-const logHelper = require('./logHelper');
 const { getIndexes } = require('./indexesHelper');
 const UNDEFINED_COLLECTION_NAME = 'Documents with undefined collection';
 
@@ -34,7 +33,6 @@ module.exports = {
 	},
 
 	testConnection: function (connectionInfo, logger, cb, app) {
-		logInfo('Test connection', connectionInfo, logger);
 		this.connect(connectionInfo, logger, async dbClient => {
 			try {
 				await dbClient.checkConnection().result();
@@ -50,7 +48,6 @@ module.exports = {
 
 	getDbCollectionsNames: async function (connectionInfo, logger, cb, app) {
 		const timeoutMessage = 'Getting collections/directories timeout';
-		logInfo('Retrieving databases, collections/directories lists', connectionInfo, logger);
 		logger.log('info', '', 'Getting databases, collections/directories lists');
 		const timeoutValue = connectionInfo.queryRequestTimeout || 1000 * 60 * 2;
 		let timeoutHandler;
@@ -127,7 +124,6 @@ module.exports = {
 	},
 
 	getDbCollectionsData: async function (data, logger, cb, app) {
-		logger.log('info', data, 'Retrieving documents', data.hiddenKeys);
 		const recordSamplingSettings = data.recordSamplingSettings;
 		const maxFetchOperationsAtATime = 10;
 
@@ -199,10 +195,4 @@ module.exports = {
 			cb(prepareError(err));
 		}
 	},
-};
-
-const logInfo = (step, connectionInfo, logger) => {
-	logger.clear();
-	logger.log('info', logHelper.getSystemInfo(connectionInfo.appVersion), step);
-	logger.log('info', connectionInfo, 'connectionInfo', connectionInfo.hiddenKeys);
 };
