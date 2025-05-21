@@ -18,7 +18,6 @@ const {
 	getDbList,
 } = require('./dbHelper');
 const { prepareError } = require('./generalHelper');
-const logHelper = require('./logHelper');
 const { getIndexes } = require('./indexesHelper');
 const UNDEFINED_COLLECTION_NAME = 'Documents with undefined collection';
 
@@ -203,6 +202,5 @@ module.exports = {
 
 const logInfo = (step, connectionInfo, logger) => {
 	logger.clear();
-	logger.log('info', logHelper.getSystemInfo(connectionInfo.appVersion), step);
 	logger.log('info', connectionInfo, 'connectionInfo', connectionInfo.hiddenKeys);
 };
