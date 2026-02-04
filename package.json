@@ -40,7 +40,7 @@
     "disabled": false,
     "dependencies": {
         "async": "3.2.6",
-        "lodash": "4.17.21",
+        "lodash": "4.17.23",
         "marklogic": "3.4.0",
         "xml-js": "1.6.11"
     },
