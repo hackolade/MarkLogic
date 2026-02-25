@@ -33,7 +33,8 @@
                 "jsonSchema": true,
                 "excel": true,
                 "plugin": true
-            }
+            },
+            "restrictNestedFieldsAsPrimaryKey": false
         }
     },
     "description": "Hackolade plugin for MarkLogic",
