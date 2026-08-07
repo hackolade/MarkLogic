@@ -70,8 +70,8 @@
         "simple-git-hooks": "2.13.1"
     },
     "overrides": {
-        "minimatch": "10.2.4",
+        "minimatch": "10.2.6",
         "eslint": "npm:-@0.0.1",
-        "brace-expansion": "5.0.8"
+        "brace-expansion": "5.0.9"
     }
 }
