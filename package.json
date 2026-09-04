@@ -73,6 +73,7 @@
 		"minimatch": "10.2.6",
 		"eslint": "npm:-@0.0.1",
 		"brace-expansion": "5.0.9",
-		"qs": "6.16.0"
+		"qs": "6.16.0",
+		"form-data": "4.0.6"
 	}
 }
